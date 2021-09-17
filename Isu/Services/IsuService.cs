@@ -36,7 +36,7 @@ namespace Isu.Services
                 throw new IsuException("Wrong input");
             }
 
-            if (_repository.Keys.All(g => g.GroupName != group.GroupName))
+            if (!_repository.Keys.Any(g => g.GroupName == group.GroupName))
             {
                 throw new IsuException("Such group doesn't really exist");
             }
