@@ -36,7 +36,7 @@ namespace Isu.Services
                 throw new IsuException("Wrong input");
             }
 
-            if (!_repository.Keys.Contains(group))
+            if (_repository.Keys.All(g => g.GroupName != group.GroupName))
             {
                 throw new IsuException("Such group doesn't really exist");
             }
@@ -64,7 +64,7 @@ namespace Isu.Services
                 throw new IsuException("Such student doesn't really exists");
             }
 
-            return _repository.Values.First(ls => ls.Any(s => s.StudentId == id)).First(s => s.StudentId == id);
+            return _repository.Values.SelectMany(x => x).FirstOrDefault(s => s.StudentId == id);
         }
 
         public Student FindStudent(string name)
