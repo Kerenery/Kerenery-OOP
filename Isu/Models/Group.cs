@@ -22,7 +22,7 @@ namespace Isu.Models
 
             private set
             {
-                if (!Regex.IsMatch(value, @"M{1}3{1}[1-4]{1}\w{2}", RegexOptions.IgnoreCase))
+                if (!Regex.IsMatch(value, @"M3[1-4]\d{2}", RegexOptions.IgnoreCase))
                 {
                      throw new IsuException("Incorrect format");
                 }

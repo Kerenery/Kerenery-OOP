@@ -22,10 +22,9 @@ namespace Isu.Tests
         {
             Assert.Catch<IsuException>(() =>
             {
-                var group = new Group("M3206");
                 _isuService.AddGroup("M3206");
-                _isuService.AddStudent(group, "Nick");
-                _isuService.AddStudent(group, "Nick");
+                _isuService.AddStudent(_isuService.FindGroup("M3206"), "Nick");
+                _isuService.AddStudent(_isuService.FindGroup("M3206"), "Nick");
             });
         }
 
@@ -34,13 +33,12 @@ namespace Isu.Tests
         {
             Assert.Catch<IsuException>(() =>
             {
-                var group = new Group("M3206");
                 _isuService.AddGroup("M3206");
                 int count = default;
                 
                 for (int i = 0; i < 30; ++i)
                 {
-                    var student = _isuService.AddStudent(group, $"NICK POOPICH{++count}");
+                    var student = _isuService.AddStudent(_isuService.FindGroup("M3206"), $"NICK POOPICH{++count}");
                 }
             });
         }
@@ -63,7 +61,7 @@ namespace Isu.Tests
                 _isuService.AddGroup("M3206");
                 var superGroup = new Group("M3230");
                 _isuService.AddStudent(_isuService.FindGroup("M3211"), "Nickolasha");
-                _isuService.ChangeStudentGroup(_isuService.FindStudent("Nickolasha"),superGroup);
+                _isuService.ChangeStudentGroup(_isuService.FindStudent("Nickolasha"), superGroup);
             });
         }
     }

@@ -24,8 +24,5 @@
 
             private set => _id = value;
         }
-
-        public override bool Equals(object obj) => obj.ToString() == this.ToString();
-        public override int GetHashCode() => this.ToString().GetHashCode();
     }
 }
