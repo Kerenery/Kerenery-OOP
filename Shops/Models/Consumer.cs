@@ -21,13 +21,8 @@ namespace Shops.Models
                     throw new ShopException("Balance cant be negative");
                 }
 
-                _balance = value;
+                _balance += value;
             }
-        }
-
-        public void ChangeBalance(decimal money)
-        {
-            Balance += money;
         }
     }
 }
