@@ -11,15 +11,18 @@ namespace Shops.Models
         private readonly List<Shop> _shops = new List<Shop>();
         private readonly List<Product> _registeredGoods = new List<Product>();
 
-        public void RegisterProduct(Product product)
+        public Product RegisterProduct(string productName)
         {
-            if (string.IsNullOrWhiteSpace(product.Name))
+            if (string.IsNullOrWhiteSpace(productName))
                 throw new ShopException("Name cant be null");
 
-            if (_registeredGoods.Any(p => p.Id == product.Id))
+            if (_registeredGoods.Any(p => p.Name == productName))
                 throw new ShopException("Product is already registered");
 
+            var product = new Product(productName);
             _registeredGoods.Add(product);
+
+            return product;
         }
 
         public void RegisterShop(Shop shop)
@@ -64,8 +67,14 @@ namespace Shops.Models
             if (_registeredGoods.All(p => p.Id != product.Id))
                 throw new ShopException("Something wrong, i can feel it");
 
-            return _shops.OrderBy(s => s.ProductStatus(product).Price).FirstOrDefault(s => s.ProductStatus(product).Count >= amount)
+            return _shops.OrderBy(s => s.ProductStatus(product).Price)
+                       .FirstOrDefault(s => s.ProductStatus(product).Count >= amount)
                    ?? throw new ShopException("Not enough goods, sry");
+        }
+
+        public Product FindRegisteredProduct(string productName)
+        {
+            return _registeredGoods.FirstOrDefault(p => p.Name == productName);
         }
 
         public ShoppingList BuyGoods(Consumer consumer, ShoppingList goodsList, Shop shop)

@@ -11,9 +11,9 @@ namespace Shops.Validation
     {
         protected readonly List<object> _allowedActors;
 
-        private Action<T, dynamic[]> _action;
+        private Action<T, object[]> _action;
 
-        public Operation(List<object> allowedActors, Action<T, dynamic[]> action)
+        public Operation(List<object> allowedActors, Action<T, object[]> action)
         {
             _allowedActors = allowedActors;
             _action = action;
@@ -21,7 +21,7 @@ namespace Shops.Validation
 
         protected abstract bool Authorize(object actor);
 
-        public void PerformOperation(dynamic actor, T self, params dynamic[] args)
+        public void PerformOperation(object actor, T self, params object[] args)
         {
             if (!Authorize(actor))
                 throw new ShopException("Invalid validation");

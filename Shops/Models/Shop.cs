@@ -1,23 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Shops.Tools;
 using Shops.Validation;
+#pragma warning disable SA1201
 
 namespace Shops.Models
 {
     public class Shop
     {
         private readonly Dictionary<Product, ProductStatus> _goods = new Dictionary<Product, ProductStatus>();
+        private readonly string _id;
         private string _name;
-        private string _id;
-        private string _adress;
+        private string _address;
 
         public Shop(string name, string address)
         {
             _id = Guid.NewGuid().ToString();
             Name = name;
-            Adress = address;
+            Address = address;
         }
 
         public string Name
@@ -26,16 +28,19 @@ namespace Shops.Models
             private set => _name = value;
         }
 
-        public string Adress
+        public string Address
         {
-            get => _adress;
-            private set => _adress = value;
+            get => _address;
+            private set => _address = value;
         }
 
         public string Id => _id;
-        public Operation<Shop> ChangePrice => new ShopOperation(new List<object> { typeof(ShopManager) }, (shop, objects) => shop.DoChangePrice(objects[0], objects[1]));
-        public Operation<Shop> BuyGoods => new ShopOperation(new List<object> { typeof(ShopManager) }, (shop, objects) => shop.DoBuyGoods(objects[0], objects[1]));
-
+        public Operation<Shop> ChangePrice => new ShopOperation(
+            new List<object> { typeof(ShopManager) },
+            (shop, objects) => shop.DoChangePrice(objects[0] as Product, (decimal)objects[1]));
+        public Operation<Shop> BuyGoods => new ShopOperation(
+            new List<object> { typeof(ShopManager) },
+            (shop, objects) => shop.DoBuyGoods(objects[0] as ShoppingList, objects[1] as Consumer));
         public Product AddProduct(Product product, decimal price, int count)
         {
             if (_goods.Keys.Any(p => p.Id == product.Id))
@@ -57,7 +62,8 @@ namespace Shops.Models
             if (shoppingList.Products().Any(product => _goods[product].Count < shoppingList.GetCount(product)))
                 throw new ShopException("There is not enough products in the shop");
 
-            decimal totalPrice = shoppingList.Products().Sum(product => _goods[product].Price * shoppingList.GetCount(product));
+            decimal totalPrice = shoppingList.Products()
+                .Sum(product => _goods[product].Price * shoppingList.GetCount(product));
 
             if (consumer.Balance < totalPrice)
                 throw new ShopException("Not enough money");

@@ -4,7 +4,7 @@ namespace Shops.Services
 {
     public interface IShopService
     {
-        void RegisterProduct(Product product);
+        Product RegisterProduct(string product);
         Product AddProduct(Shop shop, Product product, decimal price, int amount);
         void ChangePrice(Shop shop, Product product, decimal price);
         Shop FindCheapest(Product product, int amount);

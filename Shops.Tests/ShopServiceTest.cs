@@ -19,11 +19,10 @@ namespace Isu.Tests
         [Test]
         public void RegisterSameProductTwice_ThrowException()
         {
-            var product = new Product("neskvik");
             Assert.Catch<ShopException>(() =>
             {
-                _shopManager.RegisterProduct(product);
-                _shopManager.RegisterProduct(product);
+                _shopManager.RegisterProduct("nesskkbiq");
+                _shopManager.RegisterProduct("nesskkbiq");
             });
         }
 
@@ -32,24 +31,22 @@ namespace Isu.Tests
         {
             var firstShop = new Shop("Kikimora", "Barren");
             var secondShop = new Shop("Tengu", "Gas");
-            var product = new Product("moonlight energy drink");
-            _shopManager.RegisterProduct(product);
+            _shopManager.RegisterProduct("moonlight energy drink");
             _shopManager.RegisterShop(firstShop);
             _shopManager.RegisterShop(secondShop);
-            _shopManager.AddProduct(firstShop, product, 50, 20);
-            _shopManager.AddProduct(secondShop, product, 49, 10);
-            Console.WriteLine(_shopManager.FindCheapest(product, 12).Name); 
+            _shopManager.AddProduct(firstShop, _shopManager.FindRegisteredProduct("moonlight energy drink"), 50, 20);
+            _shopManager.AddProduct(secondShop, _shopManager.FindRegisteredProduct("moonlight energy drink"), 49, 10);
+            Console.WriteLine(_shopManager.FindCheapest(_shopManager.FindRegisteredProduct("moonlight energy drink"), 12).Name); 
         }
 
         [Test]
         public void ChangePrice()
         {
             var shop = new Shop("Megathron", "Ice");
-            var product = new Product("super cool staff");
-            _shopManager.RegisterProduct(product);
+            _shopManager.RegisterProduct("super cool staff");
             _shopManager.RegisterShop(shop);
-            _shopManager.AddProduct(shop, product, 300, 20);
-            _shopManager.ChangePrice(shop, product, 200);
+            _shopManager.AddProduct(shop, _shopManager.FindRegisteredProduct("super cool staff"), 300, 20);
+            _shopManager.ChangePrice(shop, _shopManager.FindRegisteredProduct("super cool staff"), 200);
         }
 
         [Test]
@@ -57,18 +54,16 @@ namespace Isu.Tests
         {
             var consumer = new Consumer(4);
             var productList = new ShoppingList();
-            var firstProduct = new Product("zyabl");
-            var secondProduct = new Product("shih");
             var shop = new Shop("Garmur", "Lava");
             
             _shopManager.RegisterShop(shop);
-            _shopManager.RegisterProduct(firstProduct);
-            _shopManager.RegisterProduct(secondProduct);
-            _shopManager.AddProduct(shop, firstProduct, 20, 20);
-            _shopManager.AddProduct(shop, secondProduct, 20, 20);
+            _shopManager.RegisterProduct("zyabl");
+            _shopManager.RegisterProduct("shih");
+            _shopManager.AddProduct(shop, _shopManager.FindRegisteredProduct("zyabl"), 20, 20);
+            _shopManager.AddProduct(shop, _shopManager.FindRegisteredProduct("shih"), 20, 20);
             
-            productList.AddProduct(firstProduct, 2);
-            productList.AddProduct(secondProduct, 2);
+            productList.AddProduct(_shopManager.FindRegisteredProduct("zyabl"), 2);
+            productList.AddProduct(_shopManager.FindRegisteredProduct("shih"), 2);
 
             Assert.Catch<ShopException>(() =>
             {
@@ -81,18 +76,16 @@ namespace Isu.Tests
         {
             var consumer = new Consumer(4000000);
             var productList = new ShoppingList();
-            var firstProduct = new Product("zyabl");
-            var secondProduct = new Product("shih");
             var shop = new Shop("Rorqual", "Plasma");
             
             _shopManager.RegisterShop(shop);
-            _shopManager.RegisterProduct(firstProduct);
-            _shopManager.RegisterProduct(secondProduct);
-            _shopManager.AddProduct(shop, firstProduct, 20, 20);
-            _shopManager.AddProduct(shop, secondProduct, 20, 20);
+            _shopManager.RegisterProduct("zyabl");
+            _shopManager.RegisterProduct("shih");
+            _shopManager.AddProduct(shop, _shopManager.FindRegisteredProduct("zyabl"), 20, 20);
+            _shopManager.AddProduct(shop, _shopManager.FindRegisteredProduct("shih"), 20, 20);
             
-            productList.AddProduct(firstProduct, 21);
-            productList.AddProduct(secondProduct, 23);
+            productList.AddProduct(_shopManager.FindRegisteredProduct("zyabl"), 21);
+            productList.AddProduct(_shopManager.FindRegisteredProduct("shih"), 23);
             
             Assert.Catch<ShopException>(() =>
             {

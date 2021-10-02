@@ -6,7 +6,7 @@ namespace Shops.Validation
 {
     public class ShopOperation : Operation<Shop>
     {
-        public ShopOperation(List<object> allowedActors, Action<Shop, dynamic[]> action)
+        public ShopOperation(List<object> allowedActors, Action<Shop, object[]> action)
             : base(allowedActors, action)
         {
         }
