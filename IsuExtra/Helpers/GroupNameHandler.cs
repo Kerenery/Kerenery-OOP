@@ -1,17 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using IsuExtra.Models;
 
 namespace IsuExtra.Helpers
 {
     public static class GroupNameHandler
     {
-        private static Dictionary<string, List<string>> _facultiesGroups = new Dictionary<string, List<string>>()
+        private static Dictionary<FacultyAttachment, List<string>> _facultiesGroups = new Dictionary<FacultyAttachment, List<string>>()
         {
-            { "FITIP", new List<string> { "M", "K" } },
-            { "BIBIP", new List<string> { "B", "I" } },
+            { FacultyAttachment.CAT, new List<string> { "M", "K" } },
+            { FacultyAttachment.ITIP, new List<string> { "B", "I" } },
         };
 
-        public static string ExtractFaculty(string groupName)
-            => _facultiesGroups.FirstOrDefault(x => x.Value.Any(g => g == groupName)).Key;
+        public static FacultyAttachment ExtractFaculty(string groupName)
+            => _facultiesGroups.FirstOrDefault(x => x.Value.Any(g => g == groupName[0].ToString())).Key;
     }
 }

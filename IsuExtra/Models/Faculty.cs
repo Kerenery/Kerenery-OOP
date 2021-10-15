@@ -4,20 +4,21 @@ using IsuExtra.Tools;
 
 namespace IsuExtra.Models
 {
-    public class Faculty : Component, IComposite
+    public class Faculty<T> : Component, IComposite
+        where T : Component, IComposite
     {
-        private readonly List<Component> _ownGroups;
-        private readonly List<Component> _mobileGroups;
+        private readonly List<T> _ownGroups;
+        private readonly List<T> _mobileGroups;
         public Faculty(string name)
             : base(name)
         {
-            _ownGroups = new List<Component>();
-            _mobileGroups = new List<Component>();
+            _ownGroups = new List<T>();
+            _mobileGroups = new List<T>();
         }
 
         public Component Add(Component component)
         {
-            if (component is not Group group)
+            if (component is not T group)
                 throw new IsuExtraException("wrong component");
 
             if (_ownGroups.Any(g => g.Name == component.Name))
@@ -29,7 +30,7 @@ namespace IsuExtra.Models
 
         public void Remove(Component component)
         {
-            if (component is not Student student)
+            if (component is not T student)
                 throw new IsuExtraException("wrong component boy");
 
             if (_ownGroups.All(s => s.Id != student.Id))
@@ -38,7 +39,7 @@ namespace IsuExtra.Models
             _ownGroups.Remove(student);
         }
 
-        public Component GetGroup(string name) => _ownGroups.FirstOrDefault(g => g.Name == name) ??
+        public T GetGroup(string name) => _ownGroups.FirstOrDefault(g => g.Name == name) ??
                                                    _mobileGroups.FirstOrDefault(g => g.Name == name) ??
                                                    throw new IsuExtraException("there is no such group");
     }
