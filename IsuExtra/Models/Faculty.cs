@@ -8,12 +8,10 @@ namespace IsuExtra.Models
         where T : Component, IComposite
     {
         private readonly List<T> _ownGroups;
-        private readonly List<T> _mobileGroups;
         public Faculty(string name)
             : base(name)
         {
             _ownGroups = new List<T>();
-            _mobileGroups = new List<T>();
         }
 
         public Component Add(Component component)
@@ -40,7 +38,6 @@ namespace IsuExtra.Models
         }
 
         public T GetGroup(string name) => _ownGroups.FirstOrDefault(g => g.Name == name) ??
-                                                   _mobileGroups.FirstOrDefault(g => g.Name == name) ??
-                                                   throw new IsuExtraException("there is no such group");
+                                          throw new IsuExtraException("there is no such group");
     }
 }

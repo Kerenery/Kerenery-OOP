@@ -6,12 +6,19 @@ namespace IsuExtra.Models
 {
     public class UniversityLesson
     {
-        public DateTime StartTime { get; }
+        // гении часто бывают в тени...
+        // public DateTime StartTime { get; }
+        // Не зыблется лёгкая дымка…
+        // Сон затуманил глаза
+        // На голой ветке
+        // Ворон сидит одиноко.
+        // Осенний вечер.
         public string Name { get; }
+        public TimePeriod Time { get; }
 
-        public UniversityLesson(DateTime startTime, string name)
+        public UniversityLesson(TimePeriod startTime, string name)
         {
-            StartTime = startTime;
+            Time = startTime;
             Name = name;
         }
     }

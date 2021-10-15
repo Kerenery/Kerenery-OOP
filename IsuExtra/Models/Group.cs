@@ -9,7 +9,6 @@ namespace IsuExtra.Models
     public class Group : Component, IComposite
     {
         private readonly List<Component> _components;
-        private List<DayShedule> _dayShedules;
 
         public Group(string name)
             : base(name)
@@ -19,10 +18,10 @@ namespace IsuExtra.Models
 
             FacultyName = GroupNameHandler.ExtractFaculty(name);
             _components = new List<Component>();
-            _dayShedules = new List<DayShedule>();
         }
 
         public FacultyAttachment FacultyName { get; }
+        public Shedule GroupShedule { get; set; }
 
         public Component Add(Component component)
         {
@@ -48,8 +47,5 @@ namespace IsuExtra.Models
         }
 
         public Component FindStudent(string name) => _components.FirstOrDefault(s => s.Name == name);
-
-        public List<UniversityLesson> GetShedule(Week day) =>
-            _dayShedules.FirstOrDefault(s => s.Day == day)?.GetShedule(day);
     }
 }
