@@ -29,26 +29,30 @@ namespace IsuExtra.Services
             return faculty;
         }
 
-        public Component AddGroup(string name, string facultyName)
+        public Component AddGroup(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new IsuExtraException("name cant be null");
 
             Component group = new Group(name);
+
+            FacultyAttachment faculty = GroupNameHandler.ExtractFaculty(name);
+            string facultyName = Enum.GetName(typeof(FacultyAttachment), faculty);
             _faculties.First(f => f.Name == facultyName).Add(group);
             return group;
         }
 
-        public Component AddStudent(string name, string groupName, string facultyName)
+        public Component AddStudent(string name, string groupName)
         {
             if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(groupName))
                 throw new IsuExtraException("name cant be null");
 
             Component student = new Student(name);
 
-            // FacultyAttachment faculty = GroupNameHandler.ExtractFaculty(groupName);
-            // string ownFaculty = Enum.GetName(typeof(FacultyAttachment), faculty);
-            _faculties.First(f => f.Name == facultyName).GetGroup(groupName).Add(student);
+            FacultyAttachment faculty = GroupNameHandler.ExtractFaculty(groupName);
+            string ownFaculty = Enum.GetName(typeof(FacultyAttachment), faculty);
+
+            _faculties.First(f => f.Name == ownFaculty).GetGroup(groupName).Add(student);
             return student;
         }
 
@@ -63,57 +67,87 @@ namespace IsuExtra.Services
             _faculties.First(f => f.Name == facultyName).GetGroup(groupName).GroupShedule = shedule;
         }
 
-        public Component AddStudentToMobileCourse(string name, string groupName, string mobileGroupName, string fname, string mname)
+        public Component AddStudentToMobileCourse(string name, string groupName, string mobileGroupName)
         {
             if (string.IsNullOrWhiteSpace(mobileGroupName) || string.IsNullOrWhiteSpace(name) ||
                 string.IsNullOrWhiteSpace(groupName))
                 throw new IsuExtraException("string is null");
 
-            FacultyAttachment ownFaculty = GroupNameHandler.ExtractFaculty(groupName);
+            FacultyAttachment faculty = GroupNameHandler.ExtractFaculty(groupName);
+            string ownFacultyName = Enum.GetName(typeof(FacultyAttachment), faculty);
             FacultyAttachment mobileFaculty = GroupNameHandler.ExtractFaculty(mobileGroupName);
+            string mobileFacultyName = Enum.GetName(typeof(FacultyAttachment), mobileFaculty);
 
-            if (ownFaculty == mobileFaculty)
+            if (string.IsNullOrWhiteSpace(ownFacultyName) || string.IsNullOrWhiteSpace(mobileFacultyName))
+                throw new IsuExtraException("there is no such faculty");
+
+            if (ownFacultyName == mobileFacultyName)
                 throw new IsuExtraException("same course boy");
 
             Component student =
-                _faculties.First(f => f.Name == fname).GetGroup(groupName).FindStudent(name) ??
+                _faculties.First(f => f.Name == ownFacultyName).GetGroup(groupName).FindStudent(name) ??
                 throw new IsuExtraException("There is no such clever student");
 
-            Group ownGroup = _faculties.Find(f => f.Name == fname).GetGroup(groupName);
-            Group mobileGroup = _faculties.Find(f => f.Name == mname).GetGroup(mobileGroupName);
+            Group ownGroup = _faculties.Find(f => f.Name == ownFacultyName).GetGroup(groupName);
+            Group mobileGroup = _faculties.Find(f => f.Name == mobileFacultyName).GetGroup(mobileGroupName);
 
-            IEnumerable<TimePeriod> result = ownGroup.GroupShedule.GetLessonsByDay(Week.Monday)
-                .Select(l => l.Time)
-                .Intersect(mobileGroup.GroupShedule.GetLessonsByDay(Week.Monday).Select(l => l.Time));
-
-            if (result is null)
+            if ((from day in (Week[])Enum.GetValues(typeof(Week))
+                    select ownGroup.GroupShedule.GetLessonsByDay(day)
+                        .Select(l => l.Time)
+                        .Intersect(mobileGroup.GroupShedule.GetLessonsByDay(day).Select(l => l.Time)))
+                .Any())
+            {
                 throw new IsuExtraException("Intersection!");
+            }
 
-            _faculties.First(f => f.Name == mname).GetGroup(mobileGroupName).Add(student);
-
+            _faculties.First(f => f.Name == mobileFacultyName).GetGroup(mobileGroupName).Add(student);
+            (student as Student).IsSubscribed = true;
             return student;
         }
 
-        public void UnsubscribeStudent(string name, string faculty)
+        public void UnsubscribeStudent(string name, string mobileGroupName)
         {
-            throw new System.NotImplementedException();
+            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrEmpty(mobileGroupName))
+                throw new IsuExtraException("name is null");
+
+            FacultyAttachment mobileFaculty = GroupNameHandler.ExtractFaculty(mobileGroupName);
+            string mobileFacultyName = Enum.GetName(typeof(FacultyAttachment), mobileFaculty);
+
+            Group group = _faculties.FirstOrDefault(f => f.Name == mobileFacultyName)?.GetGroup(mobileGroupName)
+                          ?? throw new IsuExtraException("group doesnt exist");
+            Student student = _faculties.FirstOrDefault(f => f.Name == mobileFacultyName)?.GetGroup(mobileGroupName)
+                .FindStudent(name) ?? throw new IsuExtraException("there is no such student");
+
+            student.IsSubscribed = false;
+            group.Remove(student);
         }
 
-        public List<Component> GetMobileGroups(string facultyName)
+        public List<Group> GetMobileGroups(string facultyName)
         {
-            throw new System.NotImplementedException();
+            if (string.IsNullOrWhiteSpace(facultyName))
+                throw new IsuExtraException("there is no such faculty");
+
+            return _faculties.FirstOrDefault(f => f.Name == facultyName)?.GetGroups() ??
+                   throw new IsuExtraException("there is no such fac");
         }
 
-        public List<Component> GetStudentMobileGroup(string groupName)
+        public List<Component> GetStudentsMobileGroup(string groupName)
         {
-            throw new System.NotImplementedException();
+            FacultyAttachment faculty = GroupNameHandler.ExtractFaculty(groupName);
+            string ownFacultyName = Enum.GetName(typeof(FacultyAttachment), faculty);
+
+            return GetMobileGroups(ownFacultyName).FirstOrDefault(g => g.Name == groupName)?.GetStudents() ??
+                   throw new IsuExtraException("There is no such group");
         }
 
         public List<Component> GetUnsubStudent(string commonGroupName)
         {
-            throw new System.NotImplementedException();
-        }
+            FacultyAttachment faculty = GroupNameHandler.ExtractFaculty(commonGroupName);
+            string ownFacultyName = Enum.GetName(typeof(FacultyAttachment), faculty);
 
-        public Group GetGroups(string faculty, string groupName) => _faculties.First(f => f.Name == faculty).GetGroup(groupName);
+            return GetMobileGroups(ownFacultyName).FirstOrDefault(g => g.Name == commonGroupName)?.GetStudents()
+                       .FindAll(s => ((Student)s).IsSubscribed == false) ??
+                   throw new IsuExtraException("There is mo such group");
+        }
     }
 }

@@ -6,8 +6,11 @@ namespace IsuExtra.Models
     public class Student : Component, ILeaf
     {
         public Student(string name)
-            : base(name) { }
+            : base(name)
+        {
+        }
 
+        public bool IsSubscribed { get; set; } = false;
         public override int GetHashCode() => base.GetHashCode();
 
         public override bool Equals(object obj)

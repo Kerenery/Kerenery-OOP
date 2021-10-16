@@ -8,8 +8,8 @@ namespace IsuExtra.Helpers
     {
         private static Dictionary<FacultyAttachment, List<string>> _facultiesGroups = new Dictionary<FacultyAttachment, List<string>>()
         {
-            { FacultyAttachment.CAT, new List<string> { "M", "K" } },
-            { FacultyAttachment.ITIP, new List<string> { "B", "I" } },
+            { FacultyAttachment.ITIP, new List<string> { "M", "K" } },
+            { FacultyAttachment.CAT, new List<string> { "B", "I" } },
         };
 
         public static FacultyAttachment ExtractFaculty(string groupName)

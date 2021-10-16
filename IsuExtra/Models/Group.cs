@@ -46,6 +46,7 @@ namespace IsuExtra.Models
             _components.Remove(student);
         }
 
-        public Component FindStudent(string name) => _components.FirstOrDefault(s => s.Name == name);
+        public Student FindStudent(string name) => _components.FirstOrDefault(s => s.Name == name) as Student;
+        public List<Component> GetStudents() => _components.ToList();
     }
 }

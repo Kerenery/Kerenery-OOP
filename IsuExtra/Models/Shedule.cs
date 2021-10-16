@@ -6,15 +6,20 @@ namespace IsuExtra.Models
 {
     public class Shedule
     {
-        private Dictionary<Week, List<UniversityLesson>> _shedule = new Dictionary<Week, List<UniversityLesson>>();
+        private Dictionary<Week, List<UniversityLesson>> _shedule = new Dictionary<Week, List<UniversityLesson>>()
+        {
+            { Week.Monday, new List<UniversityLesson>() },
+            { Week.Tuesday, new List<UniversityLesson>() },
+            { Week.Wednesday, new List<UniversityLesson>() },
+            { Week.Thursday, new List<UniversityLesson>() },
+            { Week.Friday, new List<UniversityLesson>() },
+            { Week.Saturday, new List<UniversityLesson>() },
+            { Week.Sunday, new List<UniversityLesson>() },
+        };
 
         public void AddLesson(Week day, string lessonName, TimePeriod time)
-        {
-            // if (_shedule.Keys.Any(d => d != day))
-            _shedule.Add(day, new List<UniversityLesson>());
-
-            _shedule[day].Add(new UniversityLesson(time, lessonName));
-        }
+            =>
+                _shedule[day].Add(new UniversityLesson(time, lessonName));
 
         public void RemoveLesson(Week day, string lessonName) =>
             _shedule[day].Remove(_shedule[day].First(l => l.Name == lessonName));

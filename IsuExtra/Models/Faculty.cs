@@ -39,5 +39,7 @@ namespace IsuExtra.Models
 
         public T GetGroup(string name) => _ownGroups.FirstOrDefault(g => g.Name == name) ??
                                           throw new IsuExtraException("there is no such group");
+
+        public List<T> GetGroups() => _ownGroups.ToList();
     }
 }
