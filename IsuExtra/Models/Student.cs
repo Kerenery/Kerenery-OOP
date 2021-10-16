@@ -3,7 +3,7 @@ using IsuExtra.Tools;
 
 namespace IsuExtra.Models
 {
-    public class Student : Component, ILeaf
+    public class Student : Component
     {
         public Student(string name)
             : base(name)

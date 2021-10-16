@@ -54,7 +54,7 @@ namespace IsuExtra.Services
             return student;
         }
 
-        public void AddSheduleToGroup(string facultyName, string groupName, Shedule shedule)
+        public void AddSheduleToGroup(string facultyName, string groupName, Schedule schedule)
         {
             if (string.IsNullOrWhiteSpace(facultyName) || string.IsNullOrWhiteSpace(groupName))
                 throw new IsuExtraException("string is null");
@@ -62,10 +62,10 @@ namespace IsuExtra.Services
             if (_faculties.All(f => f.Name != facultyName))
                 throw new IsuExtraException("there is no such faculty");
 
-            if (shedule.HasLessons() == false)
-                throw new IsuExtraException("Schedule is empty");
+            if (!schedule.HasLessons())
+                throw new IsuExtraException("Schedule.cs is empty");
 
-            _faculties.First(f => f.Name == facultyName).GetGroup(groupName).GroupShedule = shedule;
+            _faculties.First(f => f.Name == facultyName).GetGroup(groupName).GroupShedule = schedule;
         }
 
         public Component AddStudentToMobileCourse(string name, string groupName, string mobileGroupName)
@@ -96,7 +96,7 @@ namespace IsuExtra.Services
             {
                 var groupSchedule = ownGroup.GroupShedule.GetLessonsByDay(day);
                 var newGroupSchedule = mobileGroup.GroupShedule.GetLessonsByDay(day);
-                var isIntersects = groupSchedule.Select(l => l.Time).Intersect(newGroupSchedule.Select(l => l.Time)).Any();
+                bool isIntersects = groupSchedule.Select(l => l.Time).Intersect(newGroupSchedule.Select(l => l.Time)).Any();
 
                 if (isIntersects)
                     throw new IsuExtraException("Intersection");

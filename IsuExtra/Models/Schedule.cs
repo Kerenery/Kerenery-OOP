@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using IsuExtra.Tools;
 
 namespace IsuExtra.Models
 {
-    public class Shedule
+    public class Schedule
     {
-        private Dictionary<Week, List<UniversityLesson>> _shedule = new Dictionary<Week, List<UniversityLesson>>()
+        private Dictionary<Week, List<UniversityLesson>> _schedule = new Dictionary<Week, List<UniversityLesson>>()
         {
             { Week.Monday, new List<UniversityLesson>() },
             { Week.Tuesday, new List<UniversityLesson>() },
@@ -18,14 +19,18 @@ namespace IsuExtra.Models
         };
 
         public void AddLesson(Week day, string lessonName, TimePeriod time)
-            =>
-                _shedule[day].Add(new UniversityLesson(time, lessonName));
+        {
+            if (!Enum.IsDefined(typeof(Week), day))
+                throw new IsuExtraException("day is not defined");
+
+            _schedule[day].Add(new UniversityLesson(time, lessonName));
+        }
 
         public void RemoveLesson(Week day, string lessonName) =>
-            _shedule[day].Remove(_shedule[day].First(l => l.Name == lessonName));
+            _schedule[day].Remove(_schedule[day].First(l => l.Name == lessonName));
 
-        public List<UniversityLesson> GetLessonsByDay(Week day) => _shedule[day];
+        public List<UniversityLesson> GetLessonsByDay(Week day) => _schedule[day];
 
-        public bool HasLessons() => _shedule.Any();
+        public bool HasLessons() => _schedule.Any();
     }
 }

@@ -21,7 +21,7 @@ namespace IsuExtra.Models
         }
 
         public FacultyAttachment FacultyName { get; }
-        public Shedule GroupShedule { get; set; }
+        public Schedule GroupShedule { get; set; }
 
         public Component Add(Component component)
         {

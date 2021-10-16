@@ -10,17 +10,17 @@ namespace IsuExtra.Tests
     public class Tests
     {
         private IsuExtraService<Faculty<Group>> _isuService;
-        private Shedule _shedule;
-        private Shedule _newShedule;
-        private Shedule _superShedule;
+        private Schedule _shedule;
+        private Schedule _newShedule;
+        private Schedule _superShedule;
 
         [SetUp]
         public void Setup()
         {
             _isuService = new IsuExtraService<Faculty<Group>>();
-            _shedule = new Shedule();
-            _newShedule = new Shedule();
-            _superShedule = new Shedule();
+            _shedule = new Schedule();
+            _newShedule = new Schedule();
+            _superShedule = new Schedule();
             _shedule.AddLesson(Week.Monday, "KALIK", TimePeriod.First);
             _newShedule.AddLesson(Week.Monday, "KALIK+KUMARIK", TimePeriod.First);
             _superShedule.AddLesson(Week.Friday, "RABOTAY", TimePeriod.Fifth);
@@ -48,8 +48,8 @@ namespace IsuExtra.Tests
         {
             _isuService.AddStudent("Nick", "M3206");
             _isuService.AddStudent("Pick", "M3206");
-            var shedule = new Shedule();
-            var newShedule = new Shedule();
+            var shedule = new Schedule();
+            var newShedule = new Schedule();
             _isuService.AddSheduleToGroup("ITIP", "M3206", shedule);
             _isuService.AddSheduleToGroup("CAT", "I3205", newShedule);
             Assert.AreEqual("Nick", _isuService.GetUnsubStudent("M3206").First().Name);
@@ -59,7 +59,7 @@ namespace IsuExtra.Tests
         public void GetStudentsFromMobileGroup()
         {
             _isuService.AddStudent("Pick", "M3206");
-            Console.WriteLine(_isuService.GetStudentsMobileGroup("M3206").First());
+            Assert.AreEqual("Pick", _isuService.GetStudentsMobileGroup("M3206").First().Name);
         }
 
         [TestCase("Nick")]
