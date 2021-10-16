@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Channels;
 using IsuExtra.Helpers;
 using IsuExtra.Models;
 using IsuExtra.Tools;
@@ -64,6 +62,9 @@ namespace IsuExtra.Services
             if (_faculties.All(f => f.Name != facultyName))
                 throw new IsuExtraException("there is no such faculty");
 
+            if (shedule.HasLessons() == false)
+                throw new IsuExtraException("Schedule is empty");
+
             _faculties.First(f => f.Name == facultyName).GetGroup(groupName).GroupShedule = shedule;
         }
 
@@ -84,24 +85,25 @@ namespace IsuExtra.Services
             if (ownFacultyName == mobileFacultyName)
                 throw new IsuExtraException("same course boy");
 
-            Component student =
+            Student student =
                 _faculties.First(f => f.Name == ownFacultyName).GetGroup(groupName).FindStudent(name) ??
                 throw new IsuExtraException("There is no such clever student");
 
             Group ownGroup = _faculties.Find(f => f.Name == ownFacultyName).GetGroup(groupName);
             Group mobileGroup = _faculties.Find(f => f.Name == mobileFacultyName).GetGroup(mobileGroupName);
 
-            if ((from day in (Week[])Enum.GetValues(typeof(Week))
-                    select ownGroup.GroupShedule.GetLessonsByDay(day)
-                        .Select(l => l.Time)
-                        .Intersect(mobileGroup.GroupShedule.GetLessonsByDay(day).Select(l => l.Time)))
-                .Any())
+            foreach (Week day in (Week[])Enum.GetValues(typeof(Week)))
             {
-                throw new IsuExtraException("Intersection!");
+                var groupSchedule = ownGroup.GroupShedule.GetLessonsByDay(day);
+                var newGroupSchedule = mobileGroup.GroupShedule.GetLessonsByDay(day);
+                var isIntersects = groupSchedule.Select(l => l.Time).Intersect(newGroupSchedule.Select(l => l.Time)).Any();
+
+                if (isIntersects)
+                    throw new IsuExtraException("Intersection");
             }
 
             _faculties.First(f => f.Name == mobileFacultyName).GetGroup(mobileGroupName).Add(student);
-            (student as Student).IsSubscribed = true;
+            student.SubscribeStudent();
             return student;
         }
 
@@ -118,7 +120,8 @@ namespace IsuExtra.Services
             Student student = _faculties.FirstOrDefault(f => f.Name == mobileFacultyName)?.GetGroup(mobileGroupName)
                 .FindStudent(name) ?? throw new IsuExtraException("there is no such student");
 
-            student.IsSubscribed = false;
+            _faculties.FirstOrDefault(f => f.Name == mobileFacultyName)?.GetGroup(mobileGroupName)
+                .FindStudent(name).SubscribeStudent();
             group.Remove(student);
         }
 

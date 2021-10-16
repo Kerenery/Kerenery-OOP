@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using IsuExtra.Models;
+using IsuExtra.Tools;
 
 namespace IsuExtra.Helpers
 {
@@ -13,6 +14,11 @@ namespace IsuExtra.Helpers
         };
 
         public static FacultyAttachment ExtractFaculty(string groupName)
-            => _facultiesGroups.FirstOrDefault(x => x.Value.Any(g => g == groupName[0].ToString())).Key;
+        {
+            if (string.IsNullOrWhiteSpace(groupName))
+                throw new IsuExtraException("name is null");
+
+            return _facultiesGroups.FirstOrDefault(x => x.Value.Any(g => g == groupName[0].ToString())).Key;
+        }
     }
 }

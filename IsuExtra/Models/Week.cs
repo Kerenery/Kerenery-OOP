@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace IsuExtra.Models
+﻿namespace IsuExtra.Models
 {
     public enum Week
     {

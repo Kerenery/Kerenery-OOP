@@ -25,5 +25,7 @@ namespace IsuExtra.Models
             _shedule[day].Remove(_shedule[day].First(l => l.Name == lessonName));
 
         public List<UniversityLesson> GetLessonsByDay(Week day) => _shedule[day];
+
+        public bool HasLessons() => _shedule.Any();
     }
 }
