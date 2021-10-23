@@ -3,9 +3,9 @@ using Backups.Services;
 
 namespace Backups.Models
 {
-    public class SingleStorageAlgo : IAlgorithm 
+    public class SingleStorageAlgo : IAlgorithm
     {
-        public void CreateCopy(List<string> filePath)
+        public RestorePoint CreateCopy(JobObject job)
         {
             throw new System.NotImplementedException();
         }

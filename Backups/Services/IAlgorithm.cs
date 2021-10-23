@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using Backups.Models;
 
 namespace Backups.Services
 {
     public interface IAlgorithm
     {
-        void CreateCopy(List<string> filePath);
+        RestorePoint CreateCopy(JobObject job);
     }
 }

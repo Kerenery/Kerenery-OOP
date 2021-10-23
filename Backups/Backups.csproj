@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Tools" />
+    <Folder Include="Repository" />
   </ItemGroup>
 
 </Project>

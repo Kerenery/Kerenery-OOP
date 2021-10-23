@@ -5,7 +5,13 @@ namespace Backups.Models
 {
     public class RestorePoint
     {
-        private readonly List<string> _files = new List<string>();
+        private readonly List<JobObject> _jobObjects;
+
+        public RestorePoint(List<JobObject> jobObjects)
+        {
+            _jobObjects = jobObjects;
+        }
+
         public DateTime CreationTime { get; init; }
         public Guid Id { get; init; }
     }
