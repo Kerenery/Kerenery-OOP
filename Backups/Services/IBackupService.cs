@@ -9,5 +9,6 @@ namespace Backups.Services
         // JobObject AddJobObject(JobObject jobObject);
         // BackupJob CreateRestorePoint(List<JobObject> objects);
         // BackupJob JobObjectRemoveFile(BackupJob job, string fileName);
+        RestorePoint AddRestorePoint(Guid jobId, RestorePoint restorePoint);
     }
 }

@@ -6,7 +6,6 @@ namespace Backups.Models
     public class Context
     {
         private IAlgorithm _algorithm;
-
         public Context(IAlgorithm algorithm)
         {
             _algorithm = algorithm;

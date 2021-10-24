@@ -9,6 +9,11 @@ namespace Backups
     {
         private static void Main()
         {
+            IBackupService backupService = new BackupService();
+            Context context = new Context(new SingleStorageAlgo());
+            BackupJob backupJob = BackupJobBuilder
+                                    .Init(context, backupService)
+                                    .Build();
         }
     }
 }
