@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Backups.Interfaces;
 using Backups.Models;
 using Backups.Tools;
 
@@ -8,30 +9,28 @@ namespace Backups.Services
 {
     public class BackupService : IBackupService
     {
-        private readonly List<Backup> _backups = new List<Backup>();
+        private readonly Dictionary<Backup, IRepository> _backups = new ();
+        private readonly Dictionary<BackupJob, LinkedList<RestorePoint>> _backupJobs = new ();
 
-        public BackupJob AddRestorePoint(Guid backupId, RestorePoint restorePoint)
+        public RestorePoint AddRestorePoint(Guid jobId, RestorePoint restorePoint)
         {
-            var backup = _backups.FirstOrDefault(b => b.Id == backupId)
-                         ?? throw new BackupException("there is no such backup");
-            
-            backup.
+            var backupJob = _backupJobs.Keys.FirstOrDefault(b => b.Id == jobId)
+                            ?? throw new BackupException("there is no such backupJob");
+
+            if (_backupJobs[backupJob].Any(rp => rp.Id == restorePoint.Id))
+                throw new BackupException("such point is already added");
+
+            _backupJobs[backupJob].AddLast(restorePoint);
+            return restorePoint;
         }
 
-        public BackupJob JobObjectRemoveFile(BackupJob job, string fileName)
+        public IRepository BackupAddStorage(Guid backupId, IRepository storage)
         {
-            throw new System.NotImplementedException();
-        }
+            var backup = _backups.Keys.FirstOrDefault(b => b.Id == backupId)
+                         ?? throw new BackupException("There is no such backup");
 
-        public BackupJob CreateJob(List<string> filePaths, string repositoryPath)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public JobObject AddJobObject(JobObject jobObject)
-        {
-            _jobObjects.Add(jobObject);
-            return jobObject;
+            _backups[backup] = storage;
+            return storage;
         }
     }
 }

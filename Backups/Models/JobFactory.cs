@@ -24,15 +24,12 @@ namespace Backups.Models
             return jobObject;
         }
 
-        public BackupJob CreateBackupJob(Context context, LinkedList<RestorePoint> graphPoint)
+        public BackupJob CreateBackupJob(Context context)
         {
-            if (graphPoint.Count == 0)
-                throw new BackupException("there are no restore points");
-
             if (!context.IsAlgorithmExists())
                 throw new BackupException("algorithm is not stated");
 
-            var backupJob = new BackupJob(context, graphPoint);
+            var backupJob = new BackupJob() { Context = context };
             return backupJob;
         }
 

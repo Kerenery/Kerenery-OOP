@@ -1,18 +1,22 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Backups.Validation;
+using Backups.Tools;
 
 namespace Backups.Models
 {
     public class Backup
     {
-        private LinkedList<RestorePoint> _graphPoint;
+        public BackupJob BackupJob { get; private set; }
+
         public Guid Id { get; init; }
 
-        public BackupJob AddBackupJob(BackupJob backupJob)
+        public BackupJob SetJob(BackupJob backupJob)
         {
-            backupJob.GetNodes.PerformOperation(this, backupJob);
+            if (BackupJob is null)
+                throw new BackupException("Job is already added");
+
+            return BackupJob = backupJob;
         }
     }
 }
