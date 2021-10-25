@@ -5,7 +5,7 @@ namespace Backups.Models
 {
     public class SplitStorageAlgo : IAlgorithm
     {
-        public RestorePoint CreateCopy(JobObject job)
+        public Storage CreateCopy(JobObject job)
         {
             throw new System.NotImplementedException();
         }

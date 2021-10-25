@@ -8,9 +8,9 @@ namespace Backups.Models
 {
     public class JobFactory
     {
-        private BackupService _backupService;
+        private IBackupService _backupService;
 
-        public JobFactory(BackupService backupService)
+        public JobFactory(IBackupService backupService)
         {
             _backupService = backupService;
         }
@@ -22,15 +22,6 @@ namespace Backups.Models
 
             var jobObject = new JobObject() { FilePath = filepath, Id = Guid.NewGuid() };
             return jobObject;
-        }
-
-        public BackupJob CreateBackupJob(Context context)
-        {
-            if (!context.IsAlgorithmExists())
-                throw new BackupException("algorithm is not stated");
-
-            var backupJob = new BackupJob() { Context = context };
-            return backupJob;
         }
 
         public RestorePoint CreateRestorePoint(List<JobObject> jobObjects)

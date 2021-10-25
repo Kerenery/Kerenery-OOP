@@ -7,16 +7,7 @@ namespace Backups.Models
 {
     public class Backup
     {
-        public BackupJob BackupJob { get; private set; }
-
         public Guid Id { get; init; }
-
-        public BackupJob SetJob(BackupJob backupJob)
-        {
-            if (BackupJob is null)
-                throw new BackupException("Job is already added");
-
-            return BackupJob = backupJob;
-        }
+        public string Name { get; init; }
     }
 }

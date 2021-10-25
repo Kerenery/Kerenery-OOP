@@ -2,6 +2,6 @@
 {
     public interface IRepository
     {
-        string GetById(int id);
+        string Path { get; }
     }
 }

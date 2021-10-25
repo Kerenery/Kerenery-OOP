@@ -2,11 +2,7 @@
 
 namespace Backups.Models
 {
-    public class Storage : IRepository
+    public class Storage
     {
-        public string GetById(int id)
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }

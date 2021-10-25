@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Channels;
 using Backups.Models;
 using Backups.Services;
 
@@ -11,9 +13,17 @@ namespace Backups
         {
             IBackupService backupService = new BackupService();
             Context context = new Context(new SingleStorageAlgo());
+            var fabric = new JobFactory(backupService);
+
+            // var restorePoint = fabric.CreateRestorePoint(null);
             BackupJob backupJob = BackupJobBuilder
-                                    .Init(context, backupService)
+                                    .Init(backupService)
+                                    .SetAlgorithm(context)
+
+                                   // .SetRestorePoint(restorePoint)
                                     .Build();
+
+            Console.WriteLine(backupJob.Context.IsAlgorithmExists());
         }
     }
 }
