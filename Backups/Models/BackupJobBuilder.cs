@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using Backups.Services;
 
 namespace Backups.Models
@@ -7,14 +8,15 @@ namespace Backups.Models
     public class BackupJobBuilder
     {
         private readonly BackupJob _backupJob;
-        private IBackupService _backupService;
-        private BackupJobBuilder(IBackupService backupService)
+        private BackupService _backupService;
+        private BackupJobBuilder(BackupService backupService)
         {
             _backupService = backupService;
             _backupJob = new BackupJob() { Id = Guid.NewGuid() };
+            _backupService.AddBackupJob(_backupJob);
         }
 
-        public static BackupJobBuilder Init(IBackupService backupService)
+        public static BackupJobBuilder Init(BackupService backupService)
             => new BackupJobBuilder(backupService);
 
         public BackupJob Build() => _backupJob;
@@ -28,6 +30,12 @@ namespace Backups.Models
         public BackupJobBuilder SetAlgorithm(Context context)
         {
             _backupJob.SetAlgorithm(context);
+            return this;
+        }
+
+        public BackupJobBuilder SetName(string name)
+        {
+            _backupJob.SetName(name);
             return this;
         }
     }

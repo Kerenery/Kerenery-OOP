@@ -5,9 +5,9 @@ namespace Backups.Models
 {
     public class RestorePoint
     {
-        private readonly List<JobObject> _jobObjects;
+        private readonly JobObject _jobObjects;
 
-        public RestorePoint(List<JobObject> jobObjects)
+        public RestorePoint(JobObject jobObjects)
         {
             _jobObjects = jobObjects;
         }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Backups.Services;
 using Backups.Tools;
 
@@ -15,21 +16,21 @@ namespace Backups.Models
             _backupService = backupService;
         }
 
-        public JobObject CreateJobObject(string filepath)
+        public JobObject CreateJobObject(List<string> filepathes)
         {
-            if (!File.Exists(filepath))
-                throw new BackupException("such file does not really exist");
+            if (!filepathes.Any())
+                throw new BackupException($"{filepathes} is empty");
 
-            var jobObject = new JobObject() { FilePath = filepath, Id = Guid.NewGuid() };
+            var jobObject = new JobObject() { Files = filepathes, Id = Guid.NewGuid() };
             return jobObject;
         }
 
-        public RestorePoint CreateRestorePoint(List<JobObject> jobObjects)
+        public RestorePoint CreateRestorePoint(JobObject jobObject)
         {
-            if (jobObjects.Capacity == 0)
+            if (jobObject.Files.Capacity == 0)
                 throw new BackupException("there are no jobObjects to save");
 
-            var restorePoint = new RestorePoint(jobObjects)
+            var restorePoint = new RestorePoint(jobObject)
                 { CreationTime = DateTime.Now, Id = Guid.NewGuid() };
 
             return restorePoint;

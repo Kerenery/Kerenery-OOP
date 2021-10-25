@@ -2,7 +2,8 @@
 
 namespace Backups.Models
 {
-    public class Storage
+    public class Storage : IRepository
     {
+        public string Path { get; init; }
     }
 }

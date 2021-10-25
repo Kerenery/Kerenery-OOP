@@ -11,19 +11,19 @@ namespace Backups
     {
         private static void Main()
         {
-            IBackupService backupService = new BackupService();
+            BackupService backupService = new BackupService();
             Context context = new Context(new SingleStorageAlgo());
             var fabric = new JobFactory(backupService);
 
-            // var restorePoint = fabric.CreateRestorePoint(null);
+            var restorePoint = fabric.CreateRestorePoint(null);
             BackupJob backupJob = BackupJobBuilder
                                     .Init(backupService)
                                     .SetAlgorithm(context)
-
-                                   // .SetRestorePoint(restorePoint)
+                                    .SetName("newJob")
+                                    .SetRestorePoint(restorePoint)
                                     .Build();
 
-            Console.WriteLine(backupJob.Context.IsAlgorithmExists());
+            Console.WriteLine(backupJob.JobName);
         }
     }
 }

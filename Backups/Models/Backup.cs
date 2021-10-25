@@ -7,6 +7,7 @@ namespace Backups.Models
 {
     public class Backup
     {
+        private LinkedList<RestorePoint> _restorePoints = new LinkedList<RestorePoint>();
         public Guid Id { get; init; }
         public string Name { get; init; }
     }

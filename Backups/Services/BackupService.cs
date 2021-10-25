@@ -32,5 +32,28 @@ namespace Backups.Services
             _backups[backup] = storage;
             return storage;
         }
+
+        public Backup CreateBackup(string name, Guid backupJobId, string storagePath)
+        {
+            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(storagePath))
+                throw new BackupException($"string is empty {name}");
+
+            if (_backups.Keys.Any(bc => bc.Name == name))
+                throw new BackupException("such backup already exists");
+
+            var backup = new Backup() { Name = name };
+            _backups.Add(backup, new Storage() { Path = storagePath });
+            return backup;
+        }
+
+        public BackupJob AddBackupJob(BackupJob backupJob)
+        {
+            if (_backupJobs.Keys.Any(bc => bc.Id == backupJob.Id))
+                throw new BackupException("such backup is already registered");
+
+            _backupJobs.Add(backupJob, new LinkedList<RestorePoint>());
+
+            return backupJob;
+        }
     }
 }
