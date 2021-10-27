@@ -11,6 +11,7 @@ namespace Backups.Tests
     {
         private BackupService _backupService;
         private Context _context;
+        private Context _splitContext;
         private JobObject _jobObject;
         private JobFactory _factory;
         
@@ -18,14 +19,17 @@ namespace Backups.Tests
         public void Setup()
         {
             _backupService = new BackupService();
-            _context = new Context(new SplitStorageAlgo());
-            List<string> files = new() { @"C:\Users\djhit\RiderProjects\is\Kerenery\Backups\wwwroot\site.css" };
+            _context = new Context(new SingleStorageAlgo());
+            _splitContext = new Context(new SplitStorageAlgo());
+            List<string> files = new()
+                { @"C:\Users\djhit\Desktop\University\oop trash\jobObjects\txtToCopy.txt",
+                    @"C:\Users\djhit\Desktop\University\oop trash\jobObjects\txtToCopy2.txt"};
             _factory = new JobFactory(_backupService);
             _jobObject = _factory.CreateJobObject(files);
         }
 
         [Test]
-        public void CreateBackupJob()
+        public void CreateBackupJob_InvokeJobWithSameRestorepoint_ThrowException()
         {
             var backupJob = BackupJobBuilder
                             .Init(_backupService)
@@ -35,7 +39,9 @@ namespace Backups.Tests
                             .Build();
             
             var backup = _backupService
-                .CreateBackup("first backup", backupJob.Id, @"C:\Users\djhit\RiderProjects\is\Kerenery\Backups\restore");
+                .CreateBackup("first backup", backupJob.Id, @"C:\Users\djhit\Desktop\University\oop trash\repository");
+            _backupService.InvokeBackup(backup.Id, backupJob.Id);
+            _backupService.AddRestorePoint(backupJob.Id, _factory.CreateRestorePoint(_jobObject));
             _backupService.InvokeBackup(backup.Id, backupJob.Id);
         }
     }

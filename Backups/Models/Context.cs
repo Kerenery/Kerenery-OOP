@@ -17,7 +17,8 @@ namespace Backups.Models
             _algorithm = algorithm ?? throw new BackupException("algorithm cant be null");
         }
 
-        public IRepository CreateCopy(RestorePoint restorePoint, IRepository repository) => _algorithm.CreateCopy(restorePoint, repository);
+        public IRepository CreateCopy(RestorePoint restorePoint, IRepository repository, int pointOrder)
+            => _algorithm.CreateCopy(restorePoint, repository, pointOrder);
 
         public bool IsAlgorithmExists() => _algorithm is not null;
     }

@@ -17,9 +17,8 @@ namespace Backups.Services
             var backupJob = _backupJobs.Keys.FirstOrDefault(b => b.Id == jobId)
                             ?? throw new BackupException("there is no such backupJob");
 
-            if (_backupJobs[backupJob].Any(rp => rp.Id == restorePoint.Id))
-                throw new BackupException("such point is already added");
-
+            // if (_backupJobs[backupJob].Any(rp => rp.Id == restorePoint.Id))
+            //     throw new BackupException("such point is already added");
             _backupJobs[backupJob].AddLast(restorePoint);
             return restorePoint;
         }
@@ -62,9 +61,8 @@ namespace Backups.Services
                          throw new BackupException("there is no such backup");
             var backupJob = _backupJobs.Keys.FirstOrDefault(bj => bj.Id == backupJobId) ??
                             throw new BackupException("there is no such backup");
-
             var storage = backupJob.Context
-                .CreateCopy(_backupJobs[backupJob].Last(), _backups[backup]);
+                .CreateCopy(_backupJobs[backupJob].Last(), _backups[backup], _backupJobs[backupJob].Count);
 
             return storage;
         }
