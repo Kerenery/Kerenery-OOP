@@ -23,4 +23,9 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="restore" />
+    <Folder Include="wwwroot\Repository" />
+  </ItemGroup>
+
 </Project>

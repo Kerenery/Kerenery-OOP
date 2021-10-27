@@ -55,5 +55,18 @@ namespace Backups.Services
 
             return backupJob;
         }
+
+        public IRepository InvokeBackup(Guid backupId, Guid backupJobId)
+        {
+            var backup = _backups.Keys.FirstOrDefault(bc => bc.Id == backupId) ??
+                         throw new BackupException("there is no such backup");
+            var backupJob = _backupJobs.Keys.FirstOrDefault(bj => bj.Id == backupJobId) ??
+                            throw new BackupException("there is no such backup");
+
+            var storage = backupJob.Context
+                .CreateCopy(_backupJobs[backupJob].Last(), _backups[backup]);
+
+            return storage;
+        }
     }
 }

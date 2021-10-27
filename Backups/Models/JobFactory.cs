@@ -30,8 +30,8 @@ namespace Backups.Models
             if (jobObject.Files.Capacity == 0)
                 throw new BackupException("there are no jobObjects to save");
 
-            var restorePoint = new RestorePoint(jobObject)
-                { CreationTime = DateTime.Now, Id = Guid.NewGuid() };
+            var restorePoint = new RestorePoint()
+                { JobObject = jobObject, CreationTime = DateTime.Now, Id = Guid.NewGuid() };
 
             return restorePoint;
         }

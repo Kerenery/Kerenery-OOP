@@ -1,3 +1,4 @@
+using Backups.Interfaces;
 using Backups.Services;
 using Backups.Tools;
 
@@ -16,10 +17,8 @@ namespace Backups.Models
             _algorithm = algorithm ?? throw new BackupException("algorithm cant be null");
         }
 
-        public void CreateCopy(JobObject job) =>
-            _algorithm.CreateCopy(job);
+        public IRepository CreateCopy(RestorePoint restorePoint, IRepository repository) => _algorithm.CreateCopy(restorePoint, repository);
 
-        public bool IsAlgorithmExists() =>
-            _algorithm is not null;
+        public bool IsAlgorithmExists() => _algorithm is not null;
     }
 }

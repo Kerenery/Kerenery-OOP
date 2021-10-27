@@ -5,12 +5,7 @@ namespace Backups.Models
 {
     public class RestorePoint
     {
-        private readonly JobObject _jobObjects;
-
-        public RestorePoint(JobObject jobObjects)
-        {
-            _jobObjects = jobObjects;
-        }
+        public JobObject JobObject { get; init; }
 
         public DateTime CreationTime { get; init; }
         public Guid Id { get; init; }

@@ -18,21 +18,25 @@ namespace Backups.Tests
         public void Setup()
         {
             _backupService = new BackupService();
-            _context = new Context(new SingleStorageAlgo());
-            List<string> files = new() { "gyyasd" };
+            _context = new Context(new SplitStorageAlgo());
+            List<string> files = new() { @"C:\Users\djhit\RiderProjects\is\Kerenery\Backups\wwwroot\site.css" };
             _factory = new JobFactory(_backupService);
             _jobObject = _factory.CreateJobObject(files);
         }
 
         [Test]
-        public void CreateJob()
+        public void CreateBackupJob()
         {
             var backupJob = BackupJobBuilder
                             .Init(_backupService)
                             .SetName("joba")
                             .SetAlgorithm(_context)
-                            .SetRestorePoint(new RestorePoint(_jobObject))
+                            .SetRestorePoint(new RestorePoint() { JobObject = _jobObject} )
                             .Build();
+            
+            var backup = _backupService
+                .CreateBackup("first backup", backupJob.Id, @"C:\Users\djhit\RiderProjects\is\Kerenery\Backups\restore");
+            _backupService.InvokeBackup(backup.Id, backupJob.Id);
         }
     }
 }
