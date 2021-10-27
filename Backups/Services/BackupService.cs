@@ -17,8 +17,8 @@ namespace Backups.Services
             var backupJob = _backupJobs.Keys.FirstOrDefault(b => b.Id == jobId)
                             ?? throw new BackupException("there is no such backupJob");
 
-            // if (_backupJobs[backupJob].Any(rp => rp.Id == restorePoint.Id))
-            //     throw new BackupException("such point is already added");
+            if (_backupJobs[backupJob].Any(rp => rp.Id == restorePoint.Id))
+                 throw new BackupException("such point is already added");
             _backupJobs[backupJob].AddLast(restorePoint);
             return restorePoint;
         }
@@ -65,6 +65,22 @@ namespace Backups.Services
                 .CreateCopy(_backupJobs[backupJob].Last(), _backups[backup], _backupJobs[backupJob].Count);
 
             return storage;
+        }
+
+        public void StagedJobObjectRemoveFile(Guid restorePointId, string fileName)
+        {
+            var restorePoint = _backupJobs.Values.FirstOrDefault(rp => rp.Last().Id == restorePointId)
+                    .Last.Value ?? throw new BackupException("unhandled restore point");
+
+            restorePoint.JobObject.RemoveFile(fileName);
+        }
+
+        public RestorePoint FindRestorePointByJob(Guid backupJobId)
+        {
+            var backupJob = _backupJobs.Keys.FirstOrDefault(bj => bj.Id == backupJobId) ??
+                            throw new BackupException("there is no such backup");
+
+            return _backupJobs[backupJob].Last.Value ?? throw new BackupException("there is no such restore point");
         }
     }
 }
