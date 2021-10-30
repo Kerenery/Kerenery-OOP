@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Backups.Models;
 using Backups.Services;
@@ -52,6 +53,8 @@ namespace Backups.Tests
             _jobObject.Files.Remove(@"C:\Users\djhit\RiderProjects\is\Kerenery\Backups\restore\filesToBackup\2.txt");
             _backupService.AddRestorePoint(backupJob.Id, _factory.CreateRestorePoint(_jobObject));
             _backupService.InvokeBackup(backup.Id, backupJob.Id);
+            
+            Assert.AreEqual(4, Directory.GetFiles(@"C:\Users\djhit\RiderProjects\is\Kerenery\Backups\restore\backup").Length);
         }
 
         [Test]
@@ -71,6 +74,7 @@ namespace Backups.Tests
             _jobObject.Files.Remove(@"C:\Users\djhit\RiderProjects\is\Kerenery\Backups\restore\filesToBackup\2.txt");
             _backupService.AddRestorePoint(backupJob.Id, _factory.CreateRestorePoint(_jobObject));
             _backupService.InvokeBackup(backup.Id, backupJob.Id);
+            Assert.AreEqual(2, Directory.GetFiles(@"C:\Users\djhit\RiderProjects\is\Kerenery\Backups\restore\backup").Length);
         }
 
         [Test]
@@ -86,6 +90,7 @@ namespace Backups.Tests
             var backup = _backupService.CreateBackup("second backup", backupJob.Id,
                 @"C:\Users\djhit\RiderProjects\is\Kerenery\Backups\restore\backup");
             _backupService.InvokeBackup(backup.Id, backupJob.Id);
+            Assert.AreEqual(1, Directory.GetFiles(@"C:\Users\djhit\RiderProjects\is\Kerenery\Backups\restore\backup").Length);
         }
     }
 }

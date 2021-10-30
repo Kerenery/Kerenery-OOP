@@ -10,8 +10,8 @@ namespace Backups.Services
         RestorePoint AddRestorePoint(Guid jobId, RestorePoint restorePoint);
         RestorePoint FindRestorePointByJob(Guid backupJobId);
         void StagedJobObjectRemoveFile(Guid restorePointId, string fileName);
-        IRepository InvokeBackup(Guid backupId, Guid backupJobId);
+        Storage InvokeBackup(Guid backupId, Guid backupJobId);
         Backup CreateBackup(string name, Guid backupJobId, string storagePath);
-        IRepository BackupAddStorage(Guid backupId, IRepository storage);
+        Storage BackupAddStorage(Guid backupId, Storage storage);
     }
 }

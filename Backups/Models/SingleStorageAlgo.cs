@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.IO.Compression;
-using System.Linq;
-using Backups.Interfaces;
 using Backups.Services;
 
 namespace Backups.Models
 {
     public class SingleStorageAlgo : IAlgorithm
     {
-        public Storage CreateCopy(RestorePoint restorePoint, IRepository repository, int term)
+        public Storage CreateCopy(RestorePoint restorePoint, Storage repository, int term)
         {
-            var zipToOpen = $@"{repository.Path}\{term}new.zip";
+            var zipToOpen = $@"{repository.Path}{Path.DirectorySeparatorChar}{term}new.zip";
 
             using (ZipArchive archive = ZipFile.Open(zipToOpen, ZipArchiveMode.Update))
             {

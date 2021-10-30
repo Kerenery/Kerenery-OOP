@@ -27,7 +27,7 @@ namespace Backups.Models
 
         public RestorePoint CreateRestorePoint(JobObject jobObject)
         {
-            if (jobObject.Files.Capacity == 0)
+            if (jobObject.Files.Count == 0)
                 throw new BackupException("there are no jobObjects to save");
 
             var restorePoint = new RestorePoint()
