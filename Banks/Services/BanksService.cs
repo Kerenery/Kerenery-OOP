@@ -10,46 +10,57 @@ namespace Banks.Services
 {
     public class BanksService
     {
-        private readonly Dictionary<Bank, List<IAccount>> _banks = new ();
-        private readonly List<Client> _clients = new ();
+        public Dictionary<Bank, List<IAccount>> Banks { get; private set; } = new ();
+        public List<Client> Clients { get; private set; } = new ();
 
         public void SaveState()
         {
             using StreamWriter banksFile
-                = File.CreateText(@"C:\Users\djhit\RiderProjects\Kerenery\Banks\Snapshots\BanksState.json");
+                = File.CreateText(@"C:\Users\djhit\RiderProjects\is\Kerenery\Banks\Snapshots\BanksState.json");
             using StreamWriter clientsFile
-                = File.CreateText(@"C:\Users\djhit\RiderProjects\Kerenery\Banks\Snapshots\CilentsState.json");
+                = File.CreateText(@"C:\Users\djhit\RiderProjects\is\Kerenery\Banks\Snapshots\ClientsState.json");
             JsonSerializer banksSerializer = new ();
-            banksSerializer.Serialize(banksFile, _banks);
+            banksSerializer.Serialize(banksFile, Banks.ToList());
             JsonSerializer clientsSerializer = new ();
-            clientsSerializer.Serialize(clientsFile, _clients);
+            clientsSerializer.Serialize(clientsFile, Clients);
         }
 
         public void LoadState()
         {
-            using StreamReader banksReader =
-                new (@"C:\Users\djhit\RiderProjects\Kerenery\Banks\Snapshots\BanksState.json");
+            using StreamReader banksFReader =
+                new (@"C:\Users\djhit\RiderProjects\is\Kerenery\Banks\Snapshots\BanksState.json");
+            using StreamReader clientsFReader
+                = new (@"C:\Users\djhit\RiderProjects\is\Kerenery\Banks\Snapshots\ClientsState.json");
+            string jsonBanks = banksFReader.ReadToEnd();
+            string jsonClients = clientsFReader.ReadToEnd();
+            Banks = (JsonConvert.DeserializeObject<List<KeyValuePair<Bank, List<IAccount>>>>(jsonBanks)
+                      ?? throw new BanksException("deserialization error occured"))
+                .ToDictionary(kv => kv.Key, kv => kv.Value);
+            Clients = JsonConvert.DeserializeObject<List<Client>>(jsonClients);
         }
 
         public Bank AddBank(string bankName)
         {
             if (string.IsNullOrWhiteSpace(bankName))
                 throw new BanksException("name is empty");
-            if (_banks.Keys.Any(b => b.Name == bankName))
+            if (Banks.Keys.Any(b => b.Name == bankName))
                 throw new BanksException("such bank is already registered");
 
             var bank = new Bank() { Name = bankName };
-            _banks.Add(bank, new List<IAccount>());
+            Banks.Add(bank, new List<IAccount>());
 
             return bank;
         }
 
+        public Bank FindBank(string bankName)
+            => Banks.Keys.FirstOrDefault(b => b.Name == bankName);
+
         public Client RegisterClient(Client client)
         {
-            if (_clients.Any(c => c.Id == client.Id))
+            if (Clients.Any(c => c.Id == client.Id))
                 throw new BanksException("such client is already added");
 
-            _clients.Add(client);
+            Clients.Add(client);
             return client;
         }
     }

@@ -32,36 +32,24 @@ namespace Banks.Models
 
         public ClientBuilder SetName(string name)
         {
-            if (string.IsNullOrWhiteSpace(name))
-                throw new BanksException($"{name} is null or whitespace");
-
             _name = name;
             return this;
         }
 
         public ClientBuilder SetSecondName(string secondName)
         {
-            if (string.IsNullOrWhiteSpace(secondName))
-                throw new BanksException($"{secondName} is null or whitespace");
-
             _secondName = secondName;
             return this;
         }
 
         public ClientBuilder SetAddress(string address)
         {
-            if (string.IsNullOrWhiteSpace(address))
-                throw new BanksException($"{address} is null or whitespace");
-
             _address = address;
             return this;
         }
 
         public ClientBuilder SetPassportData(string passportData)
         {
-            if (string.IsNullOrWhiteSpace(passportData))
-                throw new BanksException($"{passportData} is null or whitespace");
-
             _passportData = passportData;
             return this;
         }

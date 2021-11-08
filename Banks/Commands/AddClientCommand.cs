@@ -1,6 +1,8 @@
 using System;
 using System.ComponentModel;
+using Banks.Models;
 using Banks.Services;
+using Banks.Tools;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
@@ -11,12 +13,27 @@ namespace Banks.Commands
         public override int Execute(CommandContext context, AddSettings settings)
         {
             BanksService banksService = new ();
+            banksService.LoadState();
+            string[] info = settings.Name.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            var client = ClientBuilder.Init()
+                .SetName(info.Length > 0 ? info[0] : throw new BanksException("name is required param"))
+                .SetSecondName(info.Length > 1 ? info[1] : null)
+                .SetAddress(info.Length > 2 ? info[2] : null)
+                .SetPassportData(info.Length > 3 ? info[3] : null)
+                .Build();
 
-            // taskRegistry.Load(@"D:\Downloads\book1.json");
-            // try { taskRegistry.CreateTask(settings.Name); }
-            // catch (ArgumentException e) { AnsiConsole.WriteException(e); return -1; }
-            // taskRegistry.Save(@"D:\Downloads\book1.json");
-            AnsiConsole.MarkupLine($"The [bold green]{settings.Name}[/] is added!");
+            try
+            {
+                banksService.RegisterClient(client);
+            }
+            catch (BanksException e)
+            {
+                AnsiConsole.WriteException(e);
+                return -1;
+            }
+
+            banksService.SaveState();
+            AnsiConsole.MarkupLine($"[bold green]{info[0]}[/] is added!");
             return 0;
         }
 
@@ -24,7 +41,7 @@ namespace Banks.Commands
         {
             [CommandArgument(0, "<client-info>")]
             [Description("Add some info pls")]
-            public string Name { get; set; }
+            public string Name { get; private set; }
         }
     }
 }

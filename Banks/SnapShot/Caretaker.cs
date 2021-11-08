@@ -15,7 +15,7 @@ namespace Banks.SnapShot
         public void Backup()
         {
             _mementos.Add(Account.Save());
-            using StreamWriter file = File.CreateText(@$"C:\Users\djhit\RiderProjects\Kerenery\Banks\Snapshots\snap{_mementos.Count}.json");
+            using StreamWriter file = File.CreateText(@$"C:\Users\djhit\RiderProjects\is\Kerenery\Banks\Snapshots\{_mementos.Count}.json");
             JsonSerializer serializer = new ();
             serializer.Serialize(file, _mementos.Last());
         }
@@ -26,7 +26,7 @@ namespace Banks.SnapShot
                 throw new BanksException("there are no mementos");
 
             using StreamReader reader =
-                new (@$"C:\Users\djhit\RiderProjects\Kerenery\Banks\Snapshots\snap{_mementos.Count}.json");
+                new (@$"C:\Users\djhit\RiderProjects\is\Kerenery\Banks\Snapshots\{_mementos.Count}.json");
             string json = reader.ReadToEnd();
 
             IMemento memento = Account switch

@@ -59,8 +59,14 @@ namespace Banks.Tests
                 .SetPassportData("14882281488")
                 .Build();
             bankService.RegisterClient(client);
-            bankService.AddBank("PetroMoney");
+            bankService.AddBank("PetroMoney1");
+            bankService.AddBank("PetroMoney2");
+            bankService.AddBank("PetroMoney3");
+            bankService.AddBank("PetroMoney4");
+            bankService.AddBank("PetroMoney5");
             bankService.SaveState();
+            bankService.LoadState();
+            Console.WriteLine(bankService.FindBank("PetroMoney5").Id);
         }
     }
 }
