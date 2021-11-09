@@ -19,34 +19,12 @@ namespace Banks.Accounts
 
         public DateTime OpenedOn { get; init;  }
 
-        public virtual decimal Withdraw(decimal money)
+        public decimal UpdateBalance(decimal money)
         {
-            if (CurrentBalance.WithdrawBalance <= money)
-                throw new BanksException("not enough money to withdraw");
-
-            CurrentBalance = new Balance()
-                { FixedBalance = CurrentBalance.FixedBalance, WithdrawBalance = CurrentBalance.WithdrawBalance - money };
-            return CurrentBalance.WholeBalance;
-        }
-
-        public void Replenish(decimal money)
-        {
-            if (money <= 0)
-                throw new BanksException($"u cant proceed such operation, {money} is below zero");
-
             CurrentBalance = new Balance()
                 { FixedBalance = CurrentBalance.FixedBalance, WithdrawBalance = CurrentBalance.WithdrawBalance + money };
-        }
 
-        public virtual decimal Transfer(decimal money)
-        {
-            if (CurrentBalance.WithdrawBalance < money)
-                throw new BanksException("not enough money to transfer");
-
-            CurrentBalance = new Balance()
-                { FixedBalance = CurrentBalance.FixedBalance, WithdrawBalance = CurrentBalance.WithdrawBalance - money };
-
-            return money;
+            return CurrentBalance.WholeBalance;
         }
 
         public virtual IMemento Save()

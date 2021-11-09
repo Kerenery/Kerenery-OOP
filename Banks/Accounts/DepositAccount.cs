@@ -14,14 +14,6 @@ namespace Banks.Accounts
 
         public DateTime PayDay { get; private set; }
 
-        public override decimal Withdraw(decimal money)
-        {
-            if (DateTime.Now < PayDay)
-                throw new BanksException("The DAY of PAYDAY haven't come yet");
-
-            return base.Withdraw(money);
-        }
-
         public override IMemento Save()
             => new DepositAccountMemento()
             {

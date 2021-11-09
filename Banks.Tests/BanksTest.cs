@@ -4,6 +4,7 @@ using Banks.Models;
 using Banks.Services;
 using Banks.SnapShot;
 using Banks.Tools;
+using Banks.Transactions;
 using NUnit.Framework;
 
 namespace Banks.Tests
@@ -29,7 +30,6 @@ namespace Banks.Tests
             var account = new DebitAccount(new Balance() { FixedBalance = 15, WithdrawBalance = 30 });
             Caretaker caretaker = new Caretaker() { Account = account };
             caretaker.Backup();
-            account.Replenish(500);
             Console.WriteLine(account.CurrentBalance.WholeBalance);
             caretaker.Undo();
             Console.WriteLine(account.CurrentBalance.WholeBalance);
@@ -42,7 +42,6 @@ namespace Banks.Tests
             Caretaker caretaker = new Caretaker() { Account = creditAcc };
             caretaker.Backup();
             Console.WriteLine(creditAcc.CurrentBalance.WholeBalance);
-            creditAcc.Replenish(500);
             Console.WriteLine(creditAcc.CurrentBalance.WholeBalance);
             caretaker.Undo();
             Console.WriteLine(creditAcc.CurrentBalance.WholeBalance);
@@ -67,6 +66,26 @@ namespace Banks.Tests
             bankService.SaveState();
             bankService.LoadState();
             Console.WriteLine(bankService.FindBank("PetroMoney5").Id);
+        }
+
+        [Test]
+        public void ResponsibilityCheck()
+        {
+            var depAcc = new DepositAccount(new Balance() {FixedBalance = 2000, WithdrawBalance = 3000}, DateTime.Today);
+            var credAcc = new CreditAccount(new Balance() {FixedBalance = 2000, WithdrawBalance = 3000}, 5000);
+            var bankService = new BanksService();
+            bankService.AddBank("PetroMoney10");
+            bankService.AddBank("PetroMoney20");
+            var fhandler = new WithdrawHandler(bankService.FindBank("PetroMoney10"),
+                bankService.FindBank("PetroMoney20"));
+            var shandler = new DepositTransactionHandler(bankService.FindBank("PetroMoney10"),
+                bankService.FindBank("PetroMoney20"));
+            var thandler = new CreditTransactionHandler(bankService.FindBank("PetroMoney10"),
+                bankService.FindBank("PetroMoney20"));
+            fhandler.SetNext(shandler).SetNext(thandler);
+            var result = fhandler.Handle(100, depAcc, credAcc);
+            Console.WriteLine(credAcc.CurrentBalance.WholeBalance);
+            Console.WriteLine(depAcc.CurrentBalance.WholeBalance);
         }
     }
 }

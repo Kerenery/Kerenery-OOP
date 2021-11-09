@@ -13,16 +13,6 @@ namespace Banks.Accounts
 
         public decimal CreditLimit { get; private set; }
 
-        public override decimal Withdraw(decimal money)
-        {
-            if (CurrentBalance.WithdrawBalance + CreditLimit <= money)
-                throw new BanksException("not enough money to withdraw, credit limit might be not enough");
-
-            CurrentBalance = new Balance()
-                { FixedBalance = CurrentBalance.FixedBalance, WithdrawBalance = CurrentBalance.WithdrawBalance - money };
-            return CurrentBalance.WholeBalance;
-        }
-
         public override IMemento Save()
             => new CreditAccountMemento()
                 {
