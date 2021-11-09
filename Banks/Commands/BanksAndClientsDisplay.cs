@@ -16,7 +16,7 @@ namespace Banks.Commands
             table.AddColumn("Passport Data").Centered();
             table.Title("[[ [mediumpurple2]List of clients[/] ]]");
 
-            foreach (var client in banksService.Clients)
+            /*foreach (var client in banksService)
             {
                 table.AddRow(
                     new Markup($"[underline yellow]{client.Id}[/]"),
@@ -24,7 +24,7 @@ namespace Banks.Commands
                     new Markup($"[underline yellow]{client.SecondName}[/]"),
                     new Markup($"[underline yellow]{client.Address}[/]"),
                     new Markup($"[underline yellow]{client.PassportData}[/]"));
-            }
+            }*/
 
             AnsiConsole.Write(table);
         }

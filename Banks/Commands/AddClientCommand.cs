@@ -14,7 +14,7 @@ namespace Banks.Commands
         {
             BanksService banksService = new ();
             banksService.LoadState();
-            string[] info = settings.Name.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] info = settings.Name.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             var client = ClientBuilder.Init()
                 .SetName(info.Length > 0 ? info[0] : throw new BanksException("name is required param"))
                 .SetSecondName(info.Length > 1 ? info[1] : null)
@@ -26,9 +26,9 @@ namespace Banks.Commands
             {
                 banksService.RegisterClient(client);
             }
-            catch (BanksException e)
+            catch (BanksException exception)
             {
-                AnsiConsole.WriteException(e);
+                AnsiConsole.WriteException(exception);
                 return -1;
             }
 

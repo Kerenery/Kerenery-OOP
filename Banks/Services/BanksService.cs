@@ -10,8 +10,8 @@ namespace Banks.Services
 {
     public class BanksService
     {
-        public Dictionary<Bank, List<IAccount>> Banks { get; private set; } = new ();
-        public List<Client> Clients { get; private set; } = new ();
+        private Dictionary<Bank, List<IAccount>> _banks = new Dictionary<Bank, List<IAccount>>();
+        private List<Client> _clients = new List<Client>();
 
         public void SaveState()
         {
@@ -20,9 +20,9 @@ namespace Banks.Services
             using StreamWriter clientsFile
                 = File.CreateText(@"C:\Users\djhit\RiderProjects\is\Kerenery\Banks\Snapshots\ClientsState.json");
             JsonSerializer banksSerializer = new ();
-            banksSerializer.Serialize(banksFile, Banks.ToList());
+            banksSerializer.Serialize(banksFile, _banks.ToList());
             JsonSerializer clientsSerializer = new ();
-            clientsSerializer.Serialize(clientsFile, Clients);
+            clientsSerializer.Serialize(clientsFile, _clients);
         }
 
         public void LoadState()
@@ -33,35 +33,37 @@ namespace Banks.Services
                 = new (@"C:\Users\djhit\RiderProjects\is\Kerenery\Banks\Snapshots\ClientsState.json");
             string jsonBanks = banksFReader.ReadToEnd();
             string jsonClients = clientsFReader.ReadToEnd();
-            Banks = (JsonConvert.DeserializeObject<List<KeyValuePair<Bank, List<IAccount>>>>(jsonBanks)
+            _banks = (JsonConvert.DeserializeObject<List<KeyValuePair<Bank, List<IAccount>>>>(jsonBanks)
                       ?? throw new BanksException("deserialization error occured"))
                 .ToDictionary(kv => kv.Key, kv => kv.Value);
-            Clients = JsonConvert.DeserializeObject<List<Client>>(jsonClients);
+            _clients = JsonConvert.DeserializeObject<List<Client>>(jsonClients);
         }
 
         public Bank AddBank(string bankName)
         {
             if (string.IsNullOrWhiteSpace(bankName))
                 throw new BanksException("name is empty");
-            if (Banks.Keys.Any(b => b.Name == bankName))
+            if (_banks.Keys.Any(b => b.Name == bankName))
                 throw new BanksException("such bank is already registered");
 
-            var bank = new Bank() { Name = bankName };
-            Banks.Add(bank, new List<IAccount>());
+            var bank = new Bank() { Name = bankName, Commission = 0 };
+            _banks.Add(bank, new List<IAccount>());
 
             return bank;
         }
 
         public Bank FindBank(string bankName)
-            => Banks.Keys.FirstOrDefault(b => b.Name == bankName);
+            => _banks.Keys.FirstOrDefault(b => b.Name == bankName);
 
         public Client RegisterClient(Client client)
         {
-            if (Clients.Any(c => c.Id == client.Id))
+            if (_clients.Any(c => c.Id == client.Id))
                 throw new BanksException("such client is already added");
 
-            Clients.Add(client);
+            _clients.Add(client);
             return client;
         }
+
+       // public void Withdraw(IAccount)
     }
 }
