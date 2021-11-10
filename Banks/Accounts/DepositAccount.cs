@@ -6,8 +6,8 @@ namespace Banks.Accounts
 {
     public class DepositAccount : Account
     {
-        public DepositAccount(Balance newBalance, DateTime payDay)
-            : base(newBalance)
+        public DepositAccount(Balance newBalance, Guid holderId, DateTime payDay)
+            : base(newBalance, holderId)
         {
             PayDay = payDay;
         }

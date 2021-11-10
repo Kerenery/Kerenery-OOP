@@ -19,8 +19,10 @@ namespace Banks.Transactions
                 return base.Handle(money, accountSender, accountReceiver);
             AccountCaretaker = new Caretaker() { Account = depositAccount };
             AccountCaretaker.Backup();
-            if (depositAccount.CurrentBalance.WithdrawBalance <= money || DateTime.Now < depositAccount.PayDay)
-                throw new BanksException("not enough money to withdraw, credit limit might be not enough");
+            if (depositAccount.CurrentBalance.WithdrawBalance <= money)
+                throw new BanksException("not enough money to withdraw");
+            if (DateTime.Today < depositAccount.PayDay)
+                throw new BanksException("PayDay trouble");
             return depositAccount.UpdateBalance(money);
         }
     }

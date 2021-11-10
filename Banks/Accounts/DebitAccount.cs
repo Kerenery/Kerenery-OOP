@@ -6,8 +6,8 @@ namespace Banks.Accounts
 {
     public class DebitAccount : Account
     {
-        public DebitAccount(Balance newBalance)
-            : base(newBalance)
+        public DebitAccount(Balance newBalance, Guid holderId)
+            : base(newBalance, holderId)
         {
         }
 

@@ -5,6 +5,8 @@ namespace Banks.Accounts
 {
     public interface IAccount
     {
+        public Guid AccountId { get; }
+        public Guid HolderId { get; }
         public Balance CurrentBalance { get; }
 
         public IMemento Save();

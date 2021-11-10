@@ -6,10 +6,10 @@ namespace Banks.Accounts
 {
     public abstract class Account : IAccount
     {
-        protected Account(Balance newBalance)
+        protected Account(Balance newBalance, Guid holderId)
         {
             AccountId = Guid.NewGuid();
-            HolderId = Guid.NewGuid();
+            HolderId = holderId;
             CurrentBalance = newBalance;
         }
 

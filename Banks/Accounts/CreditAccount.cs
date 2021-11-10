@@ -1,3 +1,4 @@
+using System;
 using Banks.SnapShot;
 using Banks.Tools;
 
@@ -5,8 +6,8 @@ namespace Banks.Accounts
 {
     public class CreditAccount : Account
     {
-        public CreditAccount(Balance newBalance, decimal creditLimit)
-            : base(newBalance)
+        public CreditAccount(Balance newBalance, Guid holderId, decimal creditLimit)
+            : base(newBalance, holderId)
         {
             CreditLimit = creditLimit;
         }

@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Banks.Accounts;
 using Banks.Models;
 using Banks.Tools;
+using Banks.Transactions;
 using Newtonsoft.Json;
 
 namespace Banks.Services
@@ -64,6 +66,67 @@ namespace Banks.Services
             return client;
         }
 
-       // public void Withdraw(IAccount)
+        public IAccount RegisterAccount(Guid holderId, AccountType accountType, Bank bank, Balance balance)
+        {
+            if (_clients.All(c => c.Id != holderId)) throw new BanksException("there is no such client");
+
+            if (!Enum.IsDefined(typeof(AccountType), accountType)) throw new BanksException("accountType is not defined");
+
+            if (_banks.Keys.All(b => b.Id != bank.Id)) throw new BanksException("there is no such bank");
+
+            IAccount account = accountType switch
+            {
+                AccountType.Debit => new DebitAccount(balance, holderId),
+                AccountType.Deposit => new DepositAccount(balance, holderId, DateTime.Today.AddMonths(1)),
+                AccountType.Credit => new CreditAccount(balance, holderId, bank.CreditLimit),
+                _ => throw new BanksException("unknown account type")
+            };
+
+            _banks[bank].Add(account);
+
+            return account;
+        }
+
+        public IAccount GetAccount(Guid holderId, Bank bank)
+        {
+            if (_banks.Keys.All(b => b.Id != bank.Id))
+                throw new BanksException("there is no such bank");
+
+            return _banks[bank].FirstOrDefault(ac => ac.HolderId == holderId)
+                   ?? throw new BanksException("there is no such account");
+        }
+
+        public decimal Withdraw(IAccount account, decimal money)
+        {
+            var acc = _banks.Values.First().FirstOrDefault(ac => ac.AccountId == account.AccountId)
+                      ?? throw new BanksException("there is no such account");
+
+            var bank = _banks.FirstOrDefault(x => x.Value.Contains(acc)).Key
+                       ?? throw new BanksException("such bank does not exist");
+
+            var debitWithdraw = new DebitReplenishHandler(bank);
+            var creditWithdraw = new CreditReplenishHandler(bank);
+            var depositWithdraw = new DepositReplenishHandler(bank);
+            debitWithdraw.SetNext(creditWithdraw).SetNext(depositWithdraw);
+            return debitWithdraw.Handle(money, account);
+        }
+
+        public decimal Transfer(decimal money, Guid senderId, Guid receiverId)
+        {
+            var firstAcc = _banks.Values.First().FirstOrDefault(ac => ac.AccountId == senderId)
+                      ?? throw new BanksException("there is no such account");
+            var secondAcc = _banks.Values.First().FirstOrDefault(ac => ac.AccountId == receiverId)
+                           ?? throw new BanksException("there is no such account");
+            var senderBank = _banks.FirstOrDefault(x => x.Value.Contains(firstAcc)).Key
+                       ?? throw new BanksException("such bank does not exist");
+            var receiverBank = _banks.FirstOrDefault(x => x.Value.Contains(secondAcc)).Key
+                             ?? throw new BanksException("such bank does not exist");
+
+            var debitTransfer = new WithdrawHandler(senderBank, receiverBank);
+            var creditTransfer = new CreditTransactionHandler(senderBank, receiverBank);
+            var depositTransfer = new DepositTransactionHandler(senderBank, receiverBank);
+            debitTransfer.SetNext(creditTransfer).SetNext(depositTransfer);
+            return debitTransfer.Handle(money, firstAcc, secondAcc);
+        }
     }
 }

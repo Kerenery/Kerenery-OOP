@@ -10,7 +10,10 @@ namespace Banks.Models
         public Guid Id { get; } = Guid.NewGuid();
         public string Name { get; init; }
 
-        public byte? Rate { get; init; }
+        [Range(typeof(decimal), "0", "1")]
+        public decimal Rate { get; init; }
+
+        public decimal CreditLimit { get; init; }
 
         [Range(typeof(decimal), "0", "1")]
         public decimal Commission { get; init; }
