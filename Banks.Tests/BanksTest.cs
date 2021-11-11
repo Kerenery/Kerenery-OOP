@@ -28,16 +28,42 @@ namespace Banks.Tests
                 .Build();
             var bankService = new BanksService();
             bankService.AddBank("PetroMoney10");
-            bankService.AddBank("PetroMoney20");
+            bankService.AddBank("PetroMoney20", commission: Convert.ToDecimal(0.15));
             bankService.RegisterClient(client);
             bankService.RegisterAccount(client.Id, AccountType.Debit, bankService.FindBank("PetroMoney10"), new Balance());
             bankService.RegisterClient(client2);
             bankService.RegisterAccount(client2.Id, AccountType.Debit, bankService.FindBank("PetroMoney20"), new Balance());
             bankService.Withdraw(bankService.GetAccount(client.Id,bankService.FindBank("PetroMoney10")), -1000);
-            bankService.Transfer(500, bankService.GetAccount(client.Id, bankService.FindBank("PetroMoney10")).AccountId,
+            bankService.Transfer(500, bankService.GetAccount(client.Id, bankService.FindBank("PetroMoney10")).AccountId, 
                 bankService.GetAccount(client2.Id, bankService.FindBank("PetroMoney20")).AccountId);
-            Console.WriteLine(bankService.GetAccount(client.Id, bankService.FindBank("PetroMoney10")).CurrentBalance);
-            Console.WriteLine(bankService.GetAccount(client2.Id, bankService.FindBank("PetroMoney20")).CurrentBalance);
+            Console.WriteLine(bankService.GetAccount(client.Id, bankService.FindBank("PetroMoney10")).CurrentBalance.WithdrawBalance);
+            Console.WriteLine(bankService.GetAccount(client2.Id, bankService.FindBank("PetroMoney20")).CurrentBalance.WithdrawBalance);
+        }
+
+        [Test]
+        public void InterestAccrual()
+        {
+            var client = ClientBuilder.Init()
+                .SetName("Nick")
+                .SetSecondName("Kondratev")
+                .SetAddress("Pushkin District Underground")
+                .SetPassportData("14882281488")
+                .Build();
+
+            var bankService = new BanksService();
+            bankService.AddBank("sberchick", rate: Convert.ToDecimal(0.01));
+            bankService.RegisterClient(client);
+            bankService.RegisterAccount(client.Id, AccountType.Deposit, bankService.FindBank("sberchick"), new Balance() {FixedBalance = 20});
+            bankService.InterestAccrual();
+            Console.WriteLine(bankService.GetAccount(client.Id, bankService.FindBank("sberchick")).CurrentBalance.WholeBalance);
+        }
+
+        [Test]
+        public void AddBankState()
+        {
+            var bankService = new BanksService();
+            bankService.AddBank("JOJOREFERENCE", 0M, 0.4M, 0.3M);
+            bankService.SaveState();
         }
     }
 }

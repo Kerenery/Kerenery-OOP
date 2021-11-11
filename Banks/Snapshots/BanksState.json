@@ -1,1 +1,13 @@
-[{"Key":{"Id":"eaacf1ee-1752-4e7a-a3e1-5dda8fdffb09","Name":"PetroMoney1","Rate":null,"Commission":0.0,"Profit":0.0},"Value":[]},{"Key":{"Id":"32a1f24f-d39c-4b7d-a38f-14c824276e6c","Name":"PetroMoney2","Rate":null,"Commission":0.0,"Profit":0.0},"Value":[]},{"Key":{"Id":"3a95ab13-c62a-4de4-890b-ac16eb319853","Name":"PetroMoney3","Rate":null,"Commission":0.0,"Profit":0.0},"Value":[]},{"Key":{"Id":"0526d202-fabe-4260-a41f-c89ec43536ae","Name":"PetroMoney4","Rate":null,"Commission":0.0,"Profit":0.0},"Value":[]},{"Key":{"Id":"de80db55-e69c-4381-819a-e0be2e11ceeb","Name":"PetroMoney5","Rate":null,"Commission":0.0,"Profit":0.0},"Value":[]}]
+[
+  {
+    "Key": {
+      "Id": "774b1566-55c2-445d-b5df-b04a9d9d53ac",
+      "Name": "JOJOREFERENCE",
+      "Rate": 0.0,
+      "CreditLimit": 0.4,
+      "Commission": 0.3,
+      "Profit": 0.0
+    },
+    "Value": []
+  }
+]

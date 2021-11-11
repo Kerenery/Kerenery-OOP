@@ -15,12 +15,13 @@ namespace Banks.Services
         private Dictionary<Bank, List<IAccount>> _banks = new Dictionary<Bank, List<IAccount>>();
         private List<Client> _clients = new List<Client>();
 
+        public List<Client> GetClients => new List<Client>(_clients);
         public void SaveState()
         {
             using StreamWriter banksFile
-                = File.CreateText(@"C:\Users\djhit\RiderProjects\is\Kerenery\Banks\Snapshots\BanksState.json");
+                = File.CreateText(@"C:\Users\djhit\RiderProjects\Kerenery\Banks\Snapshots\BanksState.json");
             using StreamWriter clientsFile
-                = File.CreateText(@"C:\Users\djhit\RiderProjects\is\Kerenery\Banks\Snapshots\ClientsState.json");
+                = File.CreateText(@"C:\Users\djhit\RiderProjects\Kerenery\Banks\Snapshots\ClientsState.json");
             JsonSerializer banksSerializer = new ();
             banksSerializer.Serialize(banksFile, _banks.ToList());
             JsonSerializer clientsSerializer = new ();
@@ -30,9 +31,9 @@ namespace Banks.Services
         public void LoadState()
         {
             using StreamReader banksFReader =
-                new (@"C:\Users\djhit\RiderProjects\is\Kerenery\Banks\Snapshots\BanksState.json");
+                new (@"C:\Users\djhit\RiderProjects\Kerenery\Banks\Snapshots\BanksState.json");
             using StreamReader clientsFReader
-                = new (@"C:\Users\djhit\RiderProjects\is\Kerenery\Banks\Snapshots\ClientsState.json");
+                = new (@"C:\Users\djhit\RiderProjects\Kerenery\Banks\Snapshots\ClientsState.json");
             string jsonBanks = banksFReader.ReadToEnd();
             string jsonClients = clientsFReader.ReadToEnd();
             _banks = (JsonConvert.DeserializeObject<List<KeyValuePair<Bank, List<IAccount>>>>(jsonBanks)
@@ -41,14 +42,14 @@ namespace Banks.Services
             _clients = JsonConvert.DeserializeObject<List<Client>>(jsonClients);
         }
 
-        public Bank AddBank(string bankName)
+        public Bank AddBank(string bankName, decimal rate = 0, decimal creditLimit = 0, decimal commission = 0)
         {
             if (string.IsNullOrWhiteSpace(bankName))
                 throw new BanksException("name is empty");
             if (_banks.Keys.Any(b => b.Name == bankName))
                 throw new BanksException("such bank is already registered");
 
-            var bank = new Bank() { Name = bankName, Commission = 0 };
+            var bank = new Bank() { Name = bankName, Rate = rate, CreditLimit = creditLimit, Commission = commission };
             _banks.Add(bank, new List<IAccount>());
 
             return bank;
@@ -98,11 +99,11 @@ namespace Banks.Services
 
         public decimal Withdraw(IAccount account, decimal money)
         {
-            var acc = _banks.Values.First().FirstOrDefault(ac => ac.AccountId == account.AccountId)
-                      ?? throw new BanksException("there is no such account");
-
-            var bank = _banks.FirstOrDefault(x => x.Value.Contains(acc)).Key
+            var bank = _banks.FirstOrDefault(x => x.Value.Any(ac => ac.AccountId == account.AccountId)).Key
                        ?? throw new BanksException("such bank does not exist");
+
+            var acc = _banks[bank].FirstOrDefault(ac => ac.AccountId == account.AccountId)
+                      ?? throw new BanksException("there is no such account");
 
             var debitWithdraw = new DebitReplenishHandler(bank);
             var creditWithdraw = new CreditReplenishHandler(bank);
@@ -113,20 +114,34 @@ namespace Banks.Services
 
         public decimal Transfer(decimal money, Guid senderId, Guid receiverId)
         {
-            var firstAcc = _banks.Values.First().FirstOrDefault(ac => ac.AccountId == senderId)
-                      ?? throw new BanksException("there is no such account");
-            var secondAcc = _banks.Values.First().FirstOrDefault(ac => ac.AccountId == receiverId)
-                           ?? throw new BanksException("there is no such account");
-            var senderBank = _banks.FirstOrDefault(x => x.Value.Contains(firstAcc)).Key
+            var senderBank = _banks.FirstOrDefault(x => x.Value.Any(ac => ac.AccountId == senderId)).Key
                        ?? throw new BanksException("such bank does not exist");
-            var receiverBank = _banks.FirstOrDefault(x => x.Value.Contains(secondAcc)).Key
+            var receiverBank = _banks.FirstOrDefault(x => x.Value.Any(ac => ac.AccountId == receiverId)).Key
                              ?? throw new BanksException("such bank does not exist");
+            var firstAcc = _banks[senderBank].FirstOrDefault(ac => ac.AccountId == senderId)
+                           ?? throw new BanksException("there is no such account");
+            var secondAcc = _banks[receiverBank].FirstOrDefault(ac => ac.AccountId == receiverId)
+                            ?? throw new BanksException("there is no such account");
 
             var debitTransfer = new WithdrawHandler(senderBank, receiverBank);
             var creditTransfer = new CreditTransactionHandler(senderBank, receiverBank);
             var depositTransfer = new DepositTransactionHandler(senderBank, receiverBank);
             debitTransfer.SetNext(creditTransfer).SetNext(depositTransfer);
             return debitTransfer.Handle(money, firstAcc, secondAcc);
+        }
+
+        public void InterestAccrual()
+        {
+            var depositAccounts = _banks.Values.SelectMany(accounts => accounts)
+                .Where(ac => ac is DepositAccount);
+            foreach (DepositAccount depositAccount in depositAccounts)
+            {
+                if (depositAccount.PayDay == DateTime.Today)
+                {
+                    depositAccount.UpdateBalance(depositAccount.CurrentBalance.FixedBalance * _banks
+                        .FirstOrDefault(x => x.Value.Any(ac => ac.AccountId == depositAccount.AccountId)).Key.Rate);
+                }
+            }
         }
     }
 }

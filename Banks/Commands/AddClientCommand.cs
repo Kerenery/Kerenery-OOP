@@ -28,7 +28,7 @@ namespace Banks.Commands
             }
             catch (BanksException exception)
             {
-                AnsiConsole.WriteException(exception);
+                AnsiConsole.WriteException(exception, ExceptionFormats.ShowLinks);
                 return -1;
             }
 

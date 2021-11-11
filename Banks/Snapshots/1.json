@@ -1,1 +1,10 @@
-{"AccountId":"4c7abd75-7203-414b-b586-7ecab96e62ad","HolderId":"8cc12671-4c07-41a3-9fa0-afb05bb5389d","CurrentBalance":{"WithdrawBalance":0.0,"FixedBalance":0.0,"WholeBalance":0.0},"PayDay":"0001-01-01T00:00:00"}
+{
+  "AccountId": "696c87a4-9129-4217-9b16-a78509b3c1dd",
+  "HolderId": "95ecea61-0e71-41a5-8a5a-85182c49efb2",
+  "CurrentBalance": {
+    "WithdrawBalance": 1000.0,
+    "FixedBalance": 0.0,
+    "WholeBalance": 1000.0
+  },
+  "PayDay": "0001-01-01T00:00:00"
+}
