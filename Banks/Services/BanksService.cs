@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Banks.Accounts;
 using Banks.Models;
+using Banks.SnapShot;
 using Banks.Tools;
 using Banks.Transactions;
 using Newtonsoft.Json;
@@ -132,14 +133,24 @@ namespace Banks.Services
 
         public void InterestAccrual()
         {
-            var depositAccounts = _banks.Values.SelectMany(accounts => accounts)
-                .Where(ac => ac is DepositAccount);
-            foreach (DepositAccount depositAccount in depositAccounts)
+            foreach (var account in _banks.Values.SelectMany(list => list))
             {
+                if (account is not DepositAccount depositAccount) continue;
                 if (depositAccount.PayDay == DateTime.Today)
                 {
                     depositAccount.UpdateBalance(depositAccount.CurrentBalance.FixedBalance * _banks
                         .FirstOrDefault(x => x.Value.Any(ac => ac.AccountId == depositAccount.AccountId)).Key.Rate);
+                }
+            }
+        }
+
+        public void SkipMonth()
+        {
+            foreach (var account in _banks.Values.SelectMany(list => list))
+            {
+                if (account is DepositAccount depositAccount)
+                {
+                    depositAccount.SkipMonth();
                 }
             }
         }

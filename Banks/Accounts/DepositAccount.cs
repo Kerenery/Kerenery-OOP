@@ -13,6 +13,7 @@ namespace Banks.Accounts
         }
 
         public DateTime PayDay { get; private set; }
+        public void SkipMonth() => OpenedOn = OpenedOn.AddMonths(-1);
 
         public override IMemento Save()
             => new DepositAccountMemento()

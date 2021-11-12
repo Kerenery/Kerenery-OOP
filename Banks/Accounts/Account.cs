@@ -11,13 +11,14 @@ namespace Banks.Accounts
             AccountId = Guid.NewGuid();
             HolderId = holderId;
             CurrentBalance = newBalance;
+            OpenedOn = DateTime.Today;
         }
 
         public Guid AccountId { get; protected set; }
         public Guid HolderId { get; protected set; }
         public Balance CurrentBalance { get; protected set; }
 
-        public DateTime OpenedOn { get; init;  }
+        public DateTime OpenedOn { get; protected set; }
 
         public decimal UpdateBalance(decimal money)
         {

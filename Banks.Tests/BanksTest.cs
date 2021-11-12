@@ -65,5 +65,24 @@ namespace Banks.Tests
             bankService.AddBank("JOJOREFERENCE", 0M, 0.4M, 0.3M);
             bankService.SaveState();
         }
+
+        [Test]
+        public void SkipSomeTime()
+        {
+            var client = ClientBuilder.Init()
+                .SetName("Nick")
+                .SetSecondName("Kondratev")
+                .SetAddress("Pushkin District Underground")
+                .SetPassportData("14882281488")
+                .Build();
+
+            var bankService = new BanksService();
+            bankService.AddBank("sberchick", rate: Convert.ToDecimal(0.01));
+            bankService.RegisterClient(client);
+            bankService.RegisterAccount(client.Id, AccountType.Deposit, bankService.FindBank("sberchick"), new Balance() {FixedBalance = 20});
+            Console.WriteLine(bankService.GetAccount(client.Id, bankService.FindBank("sberchick")).OpenedOn);
+            bankService.SkipMonth();
+            Console.WriteLine(bankService.GetAccount(client.Id, bankService.FindBank("sberchick")).OpenedOn);
+        }
     }
 }

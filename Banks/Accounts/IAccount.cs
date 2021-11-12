@@ -7,6 +7,7 @@ namespace Banks.Accounts
     {
         public Guid AccountId { get; }
         public Guid HolderId { get; }
+        public DateTime OpenedOn { get; }
         public Balance CurrentBalance { get; }
 
         public IMemento Save();
