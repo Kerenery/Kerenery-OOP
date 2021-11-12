@@ -11,78 +11,121 @@ namespace Banks.Tests
 {
     public class BanksTest
     {
-        [Test]
-        public void ResponsibilityCheck()
+        private BanksService _banksService;
+        private Client _firstClient;
+        private Client _secondClient;
+        private Bank _firstBank;
+        private Bank _secondBank;
+
+        [SetUp]
+        public void Setup()
         {
-            var client = ClientBuilder.Init()
-                .SetName("Nick")
-                .SetSecondName("Kondratev")
-                .SetAddress("Pushkin District Underground")
-                .SetPassportData("14882281488")
+            _banksService = new BanksService();
+
+            _firstClient = ClientBuilder.Init()
+                .SetName("URARAKA")
+                .SetSecondName("MANIKULA")
+                .SetAddress("DUCKDAPOLICE")
+                .SetPassportData("2281488228")
                 .Build();
-            var client2 = ClientBuilder.Init()
-                .SetName("Json")
-                .SetSecondName("Stat")
-                .SetAddress("Pushkin")
-                .SetPassportData("1339213231")
+
+            _secondClient = ClientBuilder.Init()
+                .SetName("BEBRITOSA")
+                .SetSecondName("NABALA")
+                .SetAddress("DUCKDAPOLICE")
+                .SetPassportData("2281488228")
                 .Build();
-            var bankService = new BanksService();
-            bankService.AddBank("PetroMoney10");
-            bankService.AddBank("PetroMoney20", commission: Convert.ToDecimal(0.15));
-            bankService.RegisterClient(client);
-            bankService.RegisterAccount(client.Id, AccountType.Debit, bankService.FindBank("PetroMoney10"), new Balance());
-            bankService.RegisterClient(client2);
-            bankService.RegisterAccount(client2.Id, AccountType.Debit, bankService.FindBank("PetroMoney20"), new Balance());
-            bankService.Withdraw(bankService.GetAccount(client.Id,bankService.FindBank("PetroMoney10")), -1000);
-            bankService.Transfer(500, bankService.GetAccount(client.Id, bankService.FindBank("PetroMoney10")).AccountId, 
-                bankService.GetAccount(client2.Id, bankService.FindBank("PetroMoney20")).AccountId);
-            Console.WriteLine(bankService.GetAccount(client.Id, bankService.FindBank("PetroMoney10")).CurrentBalance.WithdrawBalance);
-            Console.WriteLine(bankService.GetAccount(client2.Id, bankService.FindBank("PetroMoney20")).CurrentBalance.WithdrawBalance);
+
+            _firstBank = _banksService.AddBank("PERISCOPE", 0.2m, 3000m, 0.15m);
+            _secondBank = _banksService.AddBank("DALASITO", 0.15m, 9000m, 0.135m);
+
+            _banksService.RegisterClient(_firstClient);
+            _banksService.RegisterClient(_secondClient);
         }
 
         [Test]
-        public void InterestAccrual()
+        public void CreateClient()
         {
             var client = ClientBuilder.Init()
-                .SetName("Nick")
-                .SetSecondName("Kondratev")
-                .SetAddress("Pushkin District Underground")
+                .SetName("JOJO")
+                .SetSecondName("REFERENCE")
+                .SetAddress("UNDERGROUND")
                 .SetPassportData("14882281488")
                 .Build();
 
-            var bankService = new BanksService();
-            bankService.AddBank("sberchick", rate: Convert.ToDecimal(0.01));
-            bankService.RegisterClient(client);
-            bankService.RegisterAccount(client.Id, AccountType.Deposit, bankService.FindBank("sberchick"), new Balance() {FixedBalance = 20});
-            bankService.InterestAccrual();
-            Console.WriteLine(bankService.GetAccount(client.Id, bankService.FindBank("sberchick")).CurrentBalance.WholeBalance);
+            Assert.AreEqual("JOJO", client.Name);
         }
 
         [Test]
-        public void AddBankState()
+        public void InterestAccrual_SkipMonth()
         {
-            var bankService = new BanksService();
-            bankService.AddBank("JOJOREFERENCE", 0M, 0.4M, 0.3M);
-            bankService.SaveState();
+            var account = _banksService.RegisterAccount(_firstClient.Id, AccountType.Deposit, _firstBank, new Balance()
+                { FixedBalance = 200, WithdrawBalance = 5000 });
+
+            var moneyBeforeTimeTravel = account.CurrentBalance.WholeBalance;
+
+            _banksService.SkipMonth();
+
+            var moneyAfterTimeTravel = account.CurrentBalance.WholeBalance;
+
+            Assert.AreNotEqual(moneyBeforeTimeTravel, moneyAfterTimeTravel);
+
+            _banksService.SkipMonth();
+
+            var moneyAfterTwoMonth = account.CurrentBalance.WholeBalance;
+
+            Assert.AreNotEqual(moneyAfterTimeTravel, moneyAfterTwoMonth);
         }
 
         [Test]
-        public void SkipSomeTime()
+        public void Withdraw_NotEnoughMoney_ThrowException()
         {
-            var client = ClientBuilder.Init()
-                .SetName("Nick")
-                .SetSecondName("Kondratev")
-                .SetAddress("Pushkin District Underground")
-                .SetPassportData("14882281488")
-                .Build();
+            var account = _banksService.RegisterAccount(_firstClient.Id, AccountType.Debit, _firstBank,
+                new Balance() { WithdrawBalance = 400 });
 
-            var bankService = new BanksService();
-            bankService.AddBank("sberchick", rate: Convert.ToDecimal(0.01));
-            bankService.RegisterClient(client);
-            bankService.RegisterAccount(client.Id, AccountType.Deposit, bankService.FindBank("sberchick"), new Balance() {FixedBalance = 20});
-            Console.WriteLine(bankService.GetAccount(client.Id, bankService.FindBank("sberchick")).OpenedOn);
-            bankService.SkipMonth();
-            Console.WriteLine(bankService.GetAccount(client.Id, bankService.FindBank("sberchick")).OpenedOn);
+            Assert.Catch<BanksException>(() =>
+            {
+                _banksService.Withdraw(account, 402);
+            });
+        }
+
+        [Test]
+        public void WithdrawOperation_DepositAccountPayDay_ThrowException()
+        {
+            var firstAccount = _banksService.RegisterAccount(_firstClient.Id, AccountType.Deposit, _firstBank,
+                new Balance() { WithdrawBalance = 400 });
+
+            Assert.Catch<BanksException>((() =>
+            {
+                _banksService.Withdraw(firstAccount, 300);
+            }));
+        }
+
+        [Test]
+        public void TransferOperation_DebitToCredit_NotEnoughMoney_ThrowException()
+        {
+            var firstAccount = _banksService.RegisterAccount(_firstClient.Id, AccountType.Debit, _firstBank,
+                new Balance() { WithdrawBalance = 60123 });
+
+            var secondAccount = _banksService.RegisterAccount(_secondClient.Id, AccountType.Credit, _secondBank,
+                new Balance() { WithdrawBalance = 128000 });
+
+            Assert.Catch<BanksException>(() =>
+            {
+                _banksService.Transfer(900000, _firstClient.Id, _secondClient.Id);
+            });
+        }
+
+        [Test]
+        public void TransferOperation_CreditToCredit_LimitMoment()
+        {
+            var firstAccount = _banksService.RegisterAccount(_firstClient.Id, AccountType.Credit, _firstBank,
+                new Balance() { WithdrawBalance = 200 });
+
+            var secondAccount = _banksService.RegisterAccount(_secondClient.Id, AccountType.Credit, _secondBank,
+                new Balance() { WithdrawBalance = 2090 });
+
+            _banksService.Transfer(2000, _firstClient.Id, _secondClient.Id);
         }
     }
 }

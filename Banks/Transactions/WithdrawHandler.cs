@@ -1,6 +1,7 @@
 ﻿using Banks.Accounts;
 using Banks.Models;
 using Banks.SnapShot;
+using Banks.Tools;
 
 namespace Banks.Transactions
 {
@@ -18,6 +19,10 @@ namespace Banks.Transactions
 
             AccountCaretaker = new Caretaker() { Account = accountSender };
             AccountCaretaker.Backup();
+
+            if (accountSender.CurrentBalance.WithdrawBalance <= money)
+                throw new BanksException("not enough money to withdraw");
+
             accountSender.UpdateBalance(-money);
             return accountReceiver.UpdateBalance(money * (1 - Receiver.Commission));
         }

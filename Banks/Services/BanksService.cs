@@ -115,13 +115,13 @@ namespace Banks.Services
 
         public decimal Transfer(decimal money, Guid senderId, Guid receiverId)
         {
-            var senderBank = _banks.FirstOrDefault(x => x.Value.Any(ac => ac.AccountId == senderId)).Key
+            var senderBank = _banks.FirstOrDefault(x => x.Value.Any(ac => ac.HolderId == senderId)).Key
                        ?? throw new BanksException("such bank does not exist");
-            var receiverBank = _banks.FirstOrDefault(x => x.Value.Any(ac => ac.AccountId == receiverId)).Key
+            var receiverBank = _banks.FirstOrDefault(x => x.Value.Any(ac => ac.HolderId == receiverId)).Key
                              ?? throw new BanksException("such bank does not exist");
-            var firstAcc = _banks[senderBank].FirstOrDefault(ac => ac.AccountId == senderId)
+            var firstAcc = _banks[senderBank].FirstOrDefault(ac => ac.HolderId == senderId)
                            ?? throw new BanksException("there is no such account");
-            var secondAcc = _banks[receiverBank].FirstOrDefault(ac => ac.AccountId == receiverId)
+            var secondAcc = _banks[receiverBank].FirstOrDefault(ac => ac.HolderId == receiverId)
                             ?? throw new BanksException("there is no such account");
 
             var debitTransfer = new WithdrawHandler(senderBank, receiverBank);
@@ -129,19 +129,6 @@ namespace Banks.Services
             var depositTransfer = new DepositTransactionHandler(senderBank, receiverBank);
             debitTransfer.SetNext(creditTransfer).SetNext(depositTransfer);
             return debitTransfer.Handle(money, firstAcc, secondAcc);
-        }
-
-        public void InterestAccrual()
-        {
-            foreach (var account in _banks.Values.SelectMany(list => list))
-            {
-                if (account is not DepositAccount depositAccount) continue;
-                if (depositAccount.PayDay == DateTime.Today)
-                {
-                    depositAccount.UpdateBalance(depositAccount.CurrentBalance.FixedBalance * _banks
-                        .FirstOrDefault(x => x.Value.Any(ac => ac.AccountId == depositAccount.AccountId)).Key.Rate);
-                }
-            }
         }
 
         public void SkipMonth()
@@ -152,6 +139,19 @@ namespace Banks.Services
                 {
                     depositAccount.SkipMonth();
                 }
+            }
+
+            InterestAccrual();
+        }
+
+        private void InterestAccrual()
+        {
+            foreach (var account in _banks.Values.SelectMany(list => list))
+            {
+                if (account is not DepositAccount depositAccount) continue;
+
+                depositAccount.UpdateBalance(depositAccount.CurrentBalance.FixedBalance * _banks
+                        .FirstOrDefault(x => x.Value.Any(ac => ac.AccountId == depositAccount.AccountId)).Key.Rate);
             }
         }
     }
