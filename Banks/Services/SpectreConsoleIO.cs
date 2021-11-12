@@ -20,6 +20,10 @@ namespace Banks.Services
                 config.AddCommand<DisplayCommand>("Display")
                     .WithDescription("Display everything")
                     .WithExample(new[] { "Display" });
+
+                config.AddCommand<CreateCreditAccountCommand>("CreateCreditAccount")
+                    .WithDescription("Create a credit account")
+                    .WithExample(new[] { "CreateCreditAccount", "1231axzxcasdsfasdfasdf, bankName, money" });
             });
 
             return App.Run(args);
