@@ -12,7 +12,6 @@ namespace Banks.Services
             App.Configure(config =>
             {
                 config.ValidateExamples();
-
                 config.AddCommand<AddClientCommand>("AddClient")
                     .WithDescription("Create a client")
                     .WithExample(new[] { "AddClient", "Nick Kondratev Puskin 14882281488" });
@@ -23,7 +22,15 @@ namespace Banks.Services
 
                 config.AddCommand<CreateCreditAccountCommand>("CreateCreditAccount")
                     .WithDescription("Create a credit account")
-                    .WithExample(new[] { "CreateCreditAccount", "1231axzxcasdsfasdfasdf, bankName, money" });
+                    .WithExample(new[] { "CreateCreditAccount", "GUID thing, bankName, money" });
+
+                config.AddCommand<CreateDepositAccountCommand>("CreateDepositAccount")
+                    .WithDescription("Create a deposit account")
+                    .WithExample(new[] { "CreateDepositAccount", "GUID thing, bankName, money" });
+
+                config.AddCommand<CreateDebitAccountCommand>("CreateDebitAccount")
+                    .WithDescription("Create a credit account")
+                    .WithExample(new[] { "CreateCreditAccount", "GUID thing, bankName, money" });
             });
 
             return App.Run(args);

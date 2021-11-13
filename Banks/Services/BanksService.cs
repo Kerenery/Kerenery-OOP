@@ -59,6 +59,21 @@ namespace Banks.Services
         public Bank FindBank(string bankName)
             => _banks.Keys.FirstOrDefault(b => b.Name == bankName);
 
+        public IAccount FindAccount(Guid accountId)
+            => _banks.Values.SelectMany(list => list).FirstOrDefault(ac => ac.AccountId == accountId);
+
+        public List<IAccount> GetAccounts()
+        {
+            List<IAccount> accounts = new List<IAccount>();
+
+            foreach (var list in _banks.Values)
+            {
+                accounts.AddRange(list);
+            }
+
+            return accounts;
+        }
+
         public Client RegisterClient(Client client)
         {
             if (_clients.Any(c => c.Id == client.Id))
