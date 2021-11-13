@@ -63,7 +63,15 @@ namespace Banks.Services
             => _banks.Values.SelectMany(list => list).FirstOrDefault(ac => ac.AccountId == accountId);
 
         public List<IAccount> GetAccounts()
-        => return _banks.Values.SelectMany(x => x);
+        {
+            List<IAccount> accounts = new List<IAccount>();
+            foreach (var list in _banks.Values)
+            {
+                accounts.AddRange(list);
+            }
+
+            return accounts;
+        }
 
         public Client RegisterClient(Client client)
         {
