@@ -37,7 +37,10 @@ namespace Banks.Services
                 = new (@"C:\Users\djhit\RiderProjects\Kerenery\Banks\Snapshots\ClientsState.json");
             string jsonBanks = banksFReader.ReadToEnd();
             string jsonClients = clientsFReader.ReadToEnd();
-            _banks = (JsonConvert.DeserializeObject<List<KeyValuePair<Bank, List<IAccount>>>>(jsonBanks)
+            _banks = (JsonConvert.DeserializeObject<List<KeyValuePair<Bank, List<IAccount>>>>(jsonBanks, new JsonSerializerSettings()
+                      {
+                          TypeNameHandling = TypeNameHandling.Auto,
+                      })
                       ?? throw new BanksException("deserialization error occured"))
                 .ToDictionary(kv => kv.Key, kv => kv.Value);
             _clients = JsonConvert.DeserializeObject<List<Client>>(jsonClients);
