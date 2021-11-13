@@ -19,12 +19,21 @@ namespace Banks.Services
         public List<Client> GetClients => new List<Client>(_clients);
         public void SaveState()
         {
-            using StreamWriter banksFile
-                = File.CreateText(@"C:\Users\djhit\RiderProjects\Kerenery\Banks\Snapshots\BanksState.json");
+            // using StreamWriter banksFile
+            //     = File.CreateText(@"C:\Users\djhit\RiderProjects\Kerenery\Banks\Snapshots\BanksState.json");
             using StreamWriter clientsFile
                 = File.CreateText(@"C:\Users\djhit\RiderProjects\Kerenery\Banks\Snapshots\ClientsState.json");
             JsonSerializer banksSerializer = new ();
-            banksSerializer.Serialize(banksFile, _banks.ToList());
+            File.WriteAllText(
+                @"C:\Users\djhit\RiderProjects\Kerenery\Banks\Snapshots\BanksState.json",
+                JsonConvert.SerializeObject(
+                    _banks.ToList(),
+                    new JsonSerializerSettings()
+                    {
+                        TypeNameHandling = TypeNameHandling.Auto,
+                    }));
+
+            // banksSerializer.Serialize(banksFile, _banks.ToList());
             JsonSerializer clientsSerializer = new ();
             clientsSerializer.Serialize(clientsFile, _clients);
         }

@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Banks.Accounts;
 using Banks.Models;
 using Banks.Services;
@@ -126,6 +128,38 @@ namespace Banks.Tests
                 new Balance() { WithdrawBalance = 2090 });
 
             _banksService.Transfer(2000, _firstClient.Id, _secondClient.Id);
+        }
+
+        [Test]
+        public void ShouldSaveAndLoadAccountsState_Successful()
+        {
+            var firstAccount = _banksService.RegisterAccount(_firstClient.Id, AccountType.Credit, _firstBank,
+                new Balance() { WithdrawBalance = 300 });
+
+            var secondAccount = _banksService.RegisterAccount(_secondClient.Id, AccountType.Debit, _secondBank,
+                new Balance() { WithdrawBalance = 400 });
+            
+            var thirdAccount = _banksService.RegisterAccount(_secondClient.Id, AccountType.Deposit, _secondBank,
+                new Balance() { WithdrawBalance = 500 });
+
+            var expectedAccountDays = new[]
+            {
+                firstAccount.OpenedOn, 
+                secondAccount.OpenedOn, 
+                thirdAccount.OpenedOn
+            };
+            
+            expectedAccountDays = expectedAccountDays.OrderBy(x => x).ToArray();
+
+            _banksService.SaveState();
+            _banksService.LoadState();
+
+            var actial = _banksService.GetAccounts()
+                .Select(x => x.OpenedOn)
+                .OrderBy(x => x)
+                .ToArray();
+            
+            CollectionAssert.AreEqual(expectedAccountDays, actial);
         }
     }
 }

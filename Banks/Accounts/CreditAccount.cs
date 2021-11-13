@@ -1,10 +1,11 @@
 using System;
 using Banks.SnapShot;
 using Banks.Tools;
+using Newtonsoft.Json;
 
 namespace Banks.Accounts
 {
-    public class CreditAccount : Account
+    public class CreditAccount : Account, IEquatable<CreditAccount>
     {
         public CreditAccount(Balance newBalance, Guid holderId, decimal creditLimit)
             : base(newBalance, holderId)
@@ -30,6 +31,26 @@ namespace Banks.Accounts
             HolderId = accountMemento.HolderId;
             CurrentBalance = accountMemento.CurrentBalance;
             CreditLimit = accountMemento.CreditLimit;
+        }
+
+        public bool Equals(CreditAccount other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return base.Equals(other) && CreditLimit == other.CreditLimit;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((CreditAccount)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(base.GetHashCode(), CreditLimit);
         }
     }
 }
