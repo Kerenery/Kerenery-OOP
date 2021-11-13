@@ -11,18 +11,18 @@ namespace Shops.Models
         private readonly List<Shop> _shops = new List<Shop>();
         private readonly List<Product> _registeredGoods = new List<Product>();
 
-        public Product RegisterProduct(string productName)
+        public Product RegisterProduct(string product)
         {
-            if (string.IsNullOrWhiteSpace(productName))
+            if (string.IsNullOrWhiteSpace(product))
                 throw new ShopException("Name cant be null");
 
-            if (_registeredGoods.Any(p => p.Name == productName))
+            if (_registeredGoods.Any(p => p.Name == product))
                 throw new ShopException("Product is already registered");
 
-            var product = new Product(productName);
-            _registeredGoods.Add(product);
+            var newProduct = new Product(product);
+            _registeredGoods.Add(newProduct);
 
-            return product;
+            return newProduct;
         }
 
         public void RegisterShop(Shop shop)
