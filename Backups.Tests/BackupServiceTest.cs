@@ -8,6 +8,7 @@ using NUnit.Framework;
 
 namespace Backups.Tests
 {
+    [Ignore("")]
     public class BackupServiceTest
     {
         private BackupService _backupService;
