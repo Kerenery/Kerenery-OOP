@@ -5,15 +5,15 @@ namespace Banks.Accounts
 {
     public interface IAccount
     {
-        public Guid AccountId { get; }
-        public Guid HolderId { get; }
-        public DateTime OpenedOn { get; }
-        public Balance CurrentBalance { get; }
+        Guid AccountId { get; }
+        Guid HolderId { get; }
+        DateTime OpenedOn { get; }
+        Balance CurrentBalance { get; }
 
-        public IMemento Save();
+        IMemento Save();
 
-        public void Restore(IMemento memento);
+        void Restore(IMemento memento);
 
-        public decimal UpdateBalance(decimal money);
+        decimal UpdateBalance(decimal money);
     }
 }

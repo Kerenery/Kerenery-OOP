@@ -19,6 +19,9 @@ namespace Banks.Models
 
         public Client Build()
         {
+            if (string.IsNullOrWhiteSpace(_name) || string.IsNullOrWhiteSpace(_secondName))
+                throw new BanksException("name is required field");
+
             _client = new Client()
             {
                 Id = Guid.NewGuid(),
