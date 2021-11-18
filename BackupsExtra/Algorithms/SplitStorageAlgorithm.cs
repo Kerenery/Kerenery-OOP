@@ -14,9 +14,9 @@ namespace BackupsExtra.Algorithms
 
         public Limit LimitType { get; }
 
-        public RestorePoint Copy()
+        public RestorePoint Copy(JobObject jobObject, Repository repositoryToSave, int term)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 }

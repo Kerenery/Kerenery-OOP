@@ -5,7 +5,6 @@ namespace BackupsExtra.Interfaces
 {
     public interface IAlgorithm
     {
-        Limit LimitType { get; }
-        RestorePoint Copy();
+        RestorePoint Copy(JobObject jobObject, Repository repositoryToSave, int term);
     }
 }

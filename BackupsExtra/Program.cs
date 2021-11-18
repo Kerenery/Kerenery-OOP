@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using BackupsExtra.Algorithms;
 using BackupsExtra.Enums;
 using BackupsExtra.Models;
@@ -18,10 +20,6 @@ namespace BackupsExtra
                 .CreateLogger();
 
             Log.CloseAndFlush();
-
-            var algoFactory = new AlgorithmFactory();
-
-            var algo = algoFactory.CreateSplitAlgorithm(Limit.RestorePoints, new Repository(), pointsCount: 5);
         }
     }
 }

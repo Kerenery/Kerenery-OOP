@@ -2,5 +2,6 @@
 {
     public class Repository
     {
+        public string Path { get; init; }
     }
 }

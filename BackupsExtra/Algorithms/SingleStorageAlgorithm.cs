@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.IO.Compression;
 using BackupsExtra.Enums;
 using BackupsExtra.Interfaces;
 using BackupsExtra.Models;
@@ -7,16 +9,20 @@ namespace BackupsExtra.Algorithms
 {
     public class SingleStorageAlgorithm : IAlgorithm
     {
-        public SingleStorageAlgorithm(Limit limit, Repository repository, DateTime? date = null, int? pointsCount = null)
+        public RestorePoint Copy(JobObject jobObject, Repository repositoryToSave, int term)
         {
-            LimitType = limit;
-        }
+            var zipToOpen = Path.Combine(repositoryToSave.Path, "bebra.zip");
+            var restorePoint = new RestorePoint();
+            using (ZipArchive archive = ZipFile.Open(zipToOpen, ZipArchiveMode.Update))
+            {
+                foreach (var jobObjectFile in jobObject.Files)
+                {
+                    var name = Path.GetFileName(jobObjectFile);
+                    archive.CreateEntryFromFile(jobObjectFile, Path.Combine(name, $"{term}_{name}"));
+                }
+            }
 
-        public Limit LimitType { get; }
-
-        public RestorePoint Copy()
-        {
-            throw new System.NotImplementedException();
+            return restorePoint;
         }
     }
 }
