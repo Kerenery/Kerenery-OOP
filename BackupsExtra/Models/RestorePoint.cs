@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using BackupsExtra.Tools;
 
@@ -12,18 +13,19 @@ namespace BackupsExtra.Models
         public DateTime CreationDate { get; } = DateTime.Now;
         public List<string> Files { get; } = new ();
 
-        public void AddFile(string filePath)
+        public void AddFile(string zipPath, string fileName)
         {
-            if (string.IsNullOrWhiteSpace(filePath))
+            if (string.IsNullOrWhiteSpace(fileName) || string.IsNullOrWhiteSpace(zipPath))
                 throw new BackupsExtraException("filepath is empty or whitespace");
 
-            if (!File.Exists(filePath))
-                throw new BackupsExtraException($"cannot find file on {filePath}");
+            var zipFile = ZipFile.OpenRead(zipPath);
+            if (!zipFile.Entries.Any(entry => entry.FullName.EndsWith(fileName)))
+                throw new BackupsExtraException($"file is not found, {zipFile} or {fileName} is incorrect");
 
-            if (Files.Any(file => file == filePath))
+            if (Files.Any(file => file == fileName))
                 throw new BadImageFormatException("file is already added");
 
-            Files.Add(filePath);
+            Files.Add(fileName);
         }
     }
 }

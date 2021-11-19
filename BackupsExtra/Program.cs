@@ -5,6 +5,7 @@ using BackupsExtra.Algorithms;
 using BackupsExtra.Enums;
 using BackupsExtra.Models;
 using Serilog;
+using Serilog.Formatting.Json;
 using Serilog.Sinks.File;
 
 namespace BackupsExtra
@@ -16,7 +17,7 @@ namespace BackupsExtra
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Information()
                 .WriteTo.Console()
-                .WriteTo.File("log.txt")
+                .WriteTo.File(new JsonFormatter(), Path.Combine(Directory.GetCurrentDirectory(), "log.json"))
                 .CreateLogger();
 
             Log.CloseAndFlush();
