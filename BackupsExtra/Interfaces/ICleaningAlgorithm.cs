@@ -4,8 +4,7 @@ namespace BackupsExtra.Interfaces
 {
     public interface ICleaningAlgorithm
     {
-        RestorePoint Clean();
-
         bool IsMergeable { get; }
+        RestorePoint Clean();
     }
 }

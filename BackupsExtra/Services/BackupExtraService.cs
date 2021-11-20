@@ -42,5 +42,7 @@ namespace BackupsExtra.Services
             Log.Information("backupJob process finished, created new restore point");
             return backupJob;
         }
+
+        public Backup FindBackup(Guid id) => _backups.FirstOrDefault(b => b.Id == id);
     }
 }

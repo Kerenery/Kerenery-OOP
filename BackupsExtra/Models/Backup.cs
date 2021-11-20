@@ -28,5 +28,14 @@ namespace BackupsExtra.Models
             Log.Information($"new restore point is added to backup with {Id}");
             return restorePoint;
         }
+
+        public void RemoveRestorePoints(int count)
+        {
+            if (count >= Term)
+                throw new BackupsExtraException($"cant delete so many points, {count} is bigger then points count");
+
+            _restorePoints.RemoveRange(0, count);
+            Log.Information($"removed {count} points from backup {Id}");
+        }
     }
 }
