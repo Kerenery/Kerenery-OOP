@@ -2,7 +2,7 @@
 {
     public enum AlgoType
     {
-        // Single,
-        // Split,
+        Single,
+        Split,
     }
 }
