@@ -13,7 +13,7 @@ namespace BackupsExtra.Models
         private BackupExtraService _backupService;
         private string _name;
         private IAlgorithm _context;
-        private RestorePoint _restorePoint;
+        private JobObject _jobObject;
         private string _filepath;
 
         private BackupJobBuilder(BackupExtraService backupService)
@@ -26,18 +26,30 @@ namespace BackupsExtra.Models
 
         public BackupJob Build()
         {
-            if (_context is null)
-                throw new BackupsExtraException("Algorithm can't be null");
+            if (_context is null || _jobObject is null || _filepath is null)
+                throw new BackupsExtraException("required fields can't be null");
 
-            _backupJob = new BackupJob() { Algorithm = _context, Name = _name };
-            Log.Information($"backup job with {_name} is created successfully");
+            _backupJob = new BackupJob()
+            {
+                Algorithm = _context,
+                Name = _name,
+                CreationDate = DateTime.Now,
+                Id = Guid.NewGuid(),
+                Destination = new Repository() { Path = _filepath },
+                JobObject = _jobObject,
+            };
+
+            Log.Information($"backup job {_name} is created successfully");
             _backupService.AddBackupJob(_backupJob);
             return _backupJob;
         }
 
-        public BackupJobBuilder SetRestorePoint(RestorePoint restorePoint)
+        public BackupJobBuilder SetJobObject(JobObject jobObject)
         {
-            _restorePoint = restorePoint;
+            if (jobObject.Files.Count == 0)
+                throw new BackupsExtraException("job object is empty");
+
+            _jobObject = jobObject;
             return this;
         }
 
@@ -63,7 +75,6 @@ namespace BackupsExtra.Models
 
             if (!Directory.Exists(filepath))
             {
-                Log.Error("some exception (wip)");
                 throw new BackupsExtraException($"{filepath} is not correct, there is no such directory");
             }
 
