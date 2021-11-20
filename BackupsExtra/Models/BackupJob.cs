@@ -7,12 +7,14 @@ namespace BackupsExtra.Models
     {
         public string Name { get; init; }
 
-        public Guid Id { get; } = Guid.NewGuid();
+        public Guid Id { get; init; }
 
-        public DateTime CreationDate { get; } = DateTime.Now;
+        public DateTime CreationDate { get; init; }
 
         public IAlgorithm Algorithm { get; init; }
 
         public Repository Destination { get; init; }
+
+        public JobObject JobObject { get; init; }
     }
 }
