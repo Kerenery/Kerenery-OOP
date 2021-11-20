@@ -6,6 +6,8 @@ using BackupsExtra.Algorithms;
 using BackupsExtra.Models;
 using BackupsExtra.Services;
 using NUnit.Framework;
+using Serilog;
+using Serilog.Formatting.Json;
 
 namespace BackupsExtra.Tests
 {
@@ -16,6 +18,7 @@ namespace BackupsExtra.Tests
         private FileStream _firstFile;
         private FileStream _secondFile;
         private BackupExtraService _backupService;
+        private JobObject _jobObject;
 
         [SetUp]
         public void Setup()
@@ -29,37 +32,34 @@ namespace BackupsExtra.Tests
             _secondFile.Close();
             _backupService = new BackupExtraService();
             foreach(FileInfo file in _restoreDirectory.GetFiles()) file.Delete();
-            foreach(DirectoryInfo subDirectory in _restoreDirectory.GetDirectories()) subDirectory.Delete(true);
+            foreach(DirectoryInfo subDirectory in _restoreDirectory.GetDirectories()) subDirectory.Delete(false);
+                        
+            List<string> files = new()
+            {
+                Path.GetFullPath(_firstFile.Name),
+                Path.GetFullPath(_secondFile.Name),
+            };
+            
+            _jobObject = new JobObject() { Files = files };
+            
+                                    
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Information()
+                .WriteTo.Console()
+                .WriteTo.File(new JsonFormatter(), Path.Combine(Directory.GetCurrentDirectory(), "log.json"))
+                .CreateLogger();
         }
         
-        [Test]
-        public void SingleAlgorithmCopyFilesWorkCheck()
-        {
-            var algo = new SingleStorageAlgorithm();
-            
-            List<string> files = new()
-            {
-                Path.GetFullPath(_firstFile.Name),
-                Path.GetFullPath(_secondFile.Name),
-            };
-            
-            var jobObject = new JobObject() { Files = files };
-            algo.Copy(jobObject, new Repository() { Path = _restoreDirectory.FullName }, 1);
-        }
 
         [Test]
-        public void SplitAlgorithmCopyFilesWorkCheck()
+        public void BackupJobProcessWorkCheck()
         {
-            var algo = new SplitStorageAlgorithm();
-            
-            List<string> files = new()
-            {
-                Path.GetFullPath(_firstFile.Name),
-                Path.GetFullPath(_secondFile.Name),
-            };
-            
-            var jobObject = new JobObject() { Files = files };
-            algo.Copy(jobObject, new Repository() { Path = _restoreDirectory.FullName }, 1);
+            var backupJob = BackupJobBuilder.Init(_backupService)
+                .SetAlgorithm(new SingleStorageAlgorithm())
+                .SetName("иногда просто не хватает кусочка питсы")
+                .SetJobObject(_jobObject)
+                .ToDestination(_restoreDirectory.FullName)
+                .Build();
         }
     }
 }
