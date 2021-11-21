@@ -3,14 +3,16 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using BackupsExtra.Enums;
 using BackupsExtra.Tools;
 
 namespace BackupsExtra.Models
 {
     public class RestorePoint
     {
-        public Guid Id { get; } = Guid.NewGuid();
-        public DateTime CreationDate { get; } = DateTime.Now;
+        public Guid Id { get; init; }
+        public DateTime CreationDate { get; init; }
+        public AlgoType CreatedBy { get; init; }
         public List<string> Files { get; } = new ();
 
         public void AddFile(string zipPath, string fileName)
