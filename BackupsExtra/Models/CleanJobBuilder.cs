@@ -2,6 +2,7 @@
 using BackupsExtra.Interfaces;
 using BackupsExtra.Services;
 using BackupsExtra.Tools;
+using Serilog;
 
 namespace BackupsExtra.Models
 {
@@ -11,6 +12,7 @@ namespace BackupsExtra.Models
         private Guid _backupId;
         private ICleaningAlgorithm _cleaningAlgorithm;
         private BackupExtraService _backupService;
+        private CleanJob _cleanJob;
 
         private CleanJobBuilder(BackupExtraService backupService)
         {
@@ -49,6 +51,18 @@ namespace BackupsExtra.Models
         {
             if (_name == null || _cleaningAlgorithm == null)
                 throw new BackupsExtraException("required fields are not set");
+
+            _cleanJob = new CleanJob()
+            {
+                Name = _name,
+                Id = Guid.NewGuid(),
+                CleaningAlgorithm = _cleaningAlgorithm,
+                BackupToCleanId = _backupId,
+            };
+
+            _backupService.AddCleanJob(_cleanJob);
+            Log.Information($"Cleaning job {_name} is created successfully");
+            return _cleanJob;
         }
     }
 }

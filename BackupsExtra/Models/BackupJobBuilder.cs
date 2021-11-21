@@ -62,7 +62,7 @@ namespace BackupsExtra.Models
         public BackupJobBuilder SetName(string name)
         {
             if (string.IsNullOrWhiteSpace(name) || _name is not null)
-                throw new BackupsExtraException("name can't ve null");
+                throw new BackupsExtraException("name can't be null");
 
             _name = name;
             return this;
