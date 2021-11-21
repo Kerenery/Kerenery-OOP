@@ -14,6 +14,8 @@ namespace BackupsExtra.Models
 
         public Guid Id { get; init; }
 
+        public string Name { get; init; }
+
         public int Term => _restorePoints.Count;
 
         public RestorePoint AddRestorePoint(RestorePoint restorePoint)

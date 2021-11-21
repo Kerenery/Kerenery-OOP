@@ -52,8 +52,8 @@ namespace BackupsExtra.Algorithms
         {
             return algoType switch
             {
-                AlgoType.Single => new SingleStorageAlgorithm(),
-                AlgoType.Split => new SplitStorageAlgorithm(),
+                AlgoType.SingleStorage => new SingleStorageAlgorithm(),
+                AlgoType.SpliStorage => new SplitStorageAlgorithm(),
                 _ => throw new BackupsExtraException("unknown algorithm type")
             };
         }

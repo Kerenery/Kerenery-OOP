@@ -1,3 +1,4 @@
+using System;
 using BackupsExtra.Models;
 
 namespace BackupsExtra.Interfaces
@@ -5,6 +6,6 @@ namespace BackupsExtra.Interfaces
     public interface ICleaningAlgorithm
     {
         bool IsMergeable { get; }
-        RestorePoint Clean();
+        RestorePoint Clean(Guid backupId);
     }
 }

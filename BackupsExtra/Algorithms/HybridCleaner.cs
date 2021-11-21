@@ -15,7 +15,7 @@ namespace BackupsExtra.Algorithms
 
         public Limit? Preference { get; init; }
 
-        public RestorePoint Clean()
+        public RestorePoint Clean(Guid backupId)
         {
             throw new System.NotImplementedException();
         }
