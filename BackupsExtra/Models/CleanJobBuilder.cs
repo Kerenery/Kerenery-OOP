@@ -60,8 +60,8 @@ namespace BackupsExtra.Models
                 BackupToCleanId = _backupId,
             };
 
-            _backupService.AddCleanJob(_cleanJob);
             Log.Information($"Cleaning job {_name} is created successfully");
+            _backupService.AddCleanJob(_cleanJob);
             return _cleanJob;
         }
     }
