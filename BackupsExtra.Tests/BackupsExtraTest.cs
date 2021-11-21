@@ -5,6 +5,7 @@ using System.Linq;
 using BackupsExtra.Algorithms;
 using BackupsExtra.Models;
 using BackupsExtra.Services;
+using BackupsExtra.Snapshot;
 using NUnit.Framework;
 using Serilog;
 using Serilog.Formatting.Json;
@@ -19,6 +20,7 @@ namespace BackupsExtra.Tests
         private FileStream _secondFile;
         private BackupExtraService _backupService;
         private JobObject _jobObject;
+        private Keeper _backupKeeper;
 
         [SetUp]
         public void Setup()
@@ -33,6 +35,8 @@ namespace BackupsExtra.Tests
             _backupService = new BackupExtraService();
             foreach(FileInfo file in _restoreDirectory.GetFiles()) file.Delete();
             foreach(DirectoryInfo subDirectory in _restoreDirectory.GetDirectories()) subDirectory.Delete(false);
+
+            _backupKeeper = new Keeper(_backupService);
                         
             List<string> files = new()
             {
@@ -60,6 +64,17 @@ namespace BackupsExtra.Tests
                 .SetJobObject(_jobObject)
                 .ToDestination(_restoreDirectory.FullName)
                 .Build();
+            
+            var newBackupJob = BackupJobBuilder.Init(_backupService)
+                .SetAlgorithm(new SingleStorageAlgorithm())
+                .SetName("я просто напросто затупок и ничего более")
+                .SetJobObject(_jobObject)
+                .ToDestination(_restoreDirectory.FullName)
+                .Build();
+
+            
+            _backupKeeper.Backup();
+            _backupKeeper.Restore();
         }
     }
 }
