@@ -39,5 +39,7 @@ namespace BackupsExtra.Models
             _restorePoints.RemoveRange(0, count);
             Log.Information($"removed {count} points from backup {Id}");
         }
+
+        public RestorePoint GetFirstPoint() => _restorePoints.FirstOrDefault();
     }
 }

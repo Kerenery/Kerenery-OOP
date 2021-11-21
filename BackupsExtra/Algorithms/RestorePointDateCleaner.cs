@@ -10,9 +10,14 @@ namespace BackupsExtra.Algorithms
 
         public DateTime? CleaningDate { get; init; }
 
-        public RestorePoint Clean(Guid backupId)
+        public RestorePoint MergeClean(Backup backup)
         {
             throw new System.NotImplementedException();
+        }
+
+        void ICleaningAlgorithm.Clean(Backup backup)
+        {
+            throw new NotImplementedException();
         }
     }
 }

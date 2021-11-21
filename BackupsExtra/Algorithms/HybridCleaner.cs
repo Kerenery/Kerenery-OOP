@@ -2,6 +2,7 @@ using System;
 using BackupsExtra.Enums;
 using BackupsExtra.Interfaces;
 using BackupsExtra.Models;
+using BackupsExtra.Tools;
 
 namespace BackupsExtra.Algorithms
 {
@@ -15,9 +16,15 @@ namespace BackupsExtra.Algorithms
 
         public Limit? Preference { get; init; }
 
-        public RestorePoint Clean(Guid backupId)
+        public RestorePoint MergeClean(Backup backup)
         {
             throw new System.NotImplementedException();
+        }
+
+        void ICleaningAlgorithm.Clean(Backup backup)
+        {
+            var count = PointsLimit ?? throw new BackupsExtraException("Points count is  not set");
+            backup.RemoveRestorePoints(count);
         }
     }
 }

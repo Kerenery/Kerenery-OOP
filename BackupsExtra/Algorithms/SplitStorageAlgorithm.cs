@@ -11,7 +11,11 @@ namespace BackupsExtra.Algorithms
     {
         public RestorePoint Copy(JobObject jobObject, Repository repositoryToSave, int term)
         {
-            var restorePoint = new RestorePoint();
+            var restorePoint = new RestorePoint()
+            {
+                Id = Guid.NewGuid(),
+                CreatedBy = AlgoType.SpliStorage,
+            };
 
             foreach (var jobObjectFile in jobObject.Files)
             {

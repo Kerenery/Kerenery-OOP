@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using BackupsExtra.Algorithms;
+using BackupsExtra.Enums;
+using BackupsExtra.Interfaces;
 using BackupsExtra.Models;
 using BackupsExtra.Services;
 using BackupsExtra.Snapshot;
@@ -21,6 +23,8 @@ namespace BackupsExtra.Tests
         private BackupExtraService _backupService;
         private JobObject _jobObject;
         private Keeper _backupKeeper;
+        private AlgorithmFactory _algorithmFactory;
+        private ICleaningAlgorithm _cleaningAlgorithm;
 
         [SetUp]
         public void Setup()
@@ -37,6 +41,9 @@ namespace BackupsExtra.Tests
             foreach(DirectoryInfo subDirectory in _restoreDirectory.GetDirectories()) subDirectory.Delete(false);
 
             _backupKeeper = new Keeper(_backupService);
+            _algorithmFactory = new AlgorithmFactory();
+            _cleaningAlgorithm = _algorithmFactory
+                .CreateCleaningAlgorithm(Limit.RestorePoints, pointsLimit: 1);
                         
             List<string> files = new()
             {
@@ -64,7 +71,7 @@ namespace BackupsExtra.Tests
                 .SetJobObject(_jobObject)
                 .ToDestination(_restoreDirectory.FullName)
                 .Build();
-            
+
             var newBackupJob = BackupJobBuilder.Init(_backupService)
                 .SetAlgorithm(new SingleStorageAlgorithm())
                 .SetName("я просто напросто затупок и ничего более")
@@ -72,6 +79,11 @@ namespace BackupsExtra.Tests
                 .ToDestination(_restoreDirectory.FullName)
                 .Build();
 
+            var cleanJob = CleanJobBuilder.Init(_backupService)
+                .SetName("я клининг джобайден")
+                .SetAlgorithm(_cleaningAlgorithm)
+                .SetBackupToClean(_backupService.FindBackup("backup[0]").Id)
+                .Build();
             
             _backupKeeper.Backup();
             _backupKeeper.Restore();
