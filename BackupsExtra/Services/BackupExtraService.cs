@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using BackupsExtra.Algorithms;
+using BackupsExtra.Enums;
 using BackupsExtra.Models;
 using BackupsExtra.Snapshot;
 using BackupsExtra.Tools;
@@ -34,7 +35,8 @@ namespace BackupsExtra.Services
                     Repository = backupJob.Destination,
                     Id = Guid.NewGuid(),
                     Name = $"backup[{_backups.Count}]",
-                };
+                    CreatedBy = ,
+,                };
 
                 _backups.Add(backup);
                 Log.Information($"{backup.Id} backup is created");

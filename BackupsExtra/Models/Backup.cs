@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using BackupsExtra.Enums;
 using BackupsExtra.Tools;
 using Microsoft.VisualBasic.CompilerServices;
 using Serilog;
@@ -15,6 +16,8 @@ namespace BackupsExtra.Models
         public Guid Id { get; init; }
 
         public string Name { get; init; }
+
+        public AlgoType CreatedBy { get; init; }
 
         public int Term => _restorePoints.Count;
 

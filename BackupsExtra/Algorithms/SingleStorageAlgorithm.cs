@@ -12,13 +12,14 @@ namespace BackupsExtra.Algorithms
 {
     public class SingleStorageAlgorithm : IAlgorithm
     {
+        public AlgoType Type { get; } = AlgoType.SingleStorage;
+
         public RestorePoint Copy(JobObject jobObject, Repository repositoryToSave, int term)
         {
             var zipToOpen = Path.Combine(repositoryToSave.Path, $"{Guid.NewGuid().ToString()[..10]}.zip");
             var restorePoint = new RestorePoint()
             {
                 Id = Guid.NewGuid(),
-                CreatedBy = AlgoType.SingleStorage,
             };
 
             var files = new List<string>();

@@ -9,12 +9,12 @@ namespace BackupsExtra.Algorithms
 {
     public class SplitStorageAlgorithm : IAlgorithm
     {
+        public AlgoType Type { get; } = AlgoType.SpliStorage;
         public RestorePoint Copy(JobObject jobObject, Repository repositoryToSave, int term)
         {
             var restorePoint = new RestorePoint()
             {
                 Id = Guid.NewGuid(),
-                CreatedBy = AlgoType.SpliStorage,
             };
 
             foreach (var jobObjectFile in jobObject.Files)

@@ -10,10 +10,10 @@ namespace BackupsExtra.Models
 {
     public class RestorePoint
     {
+        private List<string> _files = new ();
         public Guid Id { get; init; }
+
         public DateTime CreationDate { get; init; }
-        public AlgoType CreatedBy { get; init; }
-        public List<string> Files { get; } = new ();
 
         public void AddFile(string zipPath, string fileName)
         {
@@ -25,10 +25,10 @@ namespace BackupsExtra.Models
                 throw new BackupsExtraException($"file is not found, {zipFile} or {fileName} is incorrect");
 
             zipFile.Dispose();
-            if (Files.Any(file => file == fileName))
+            if (_files.Any(file => file == fileName))
                 throw new BadImageFormatException("file is already added");
 
-            Files.Add(fileName);
+            _files.Add(fileName);
         }
     }
 }

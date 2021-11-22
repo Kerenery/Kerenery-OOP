@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using BackupsExtra.Enums;
 using BackupsExtra.Interfaces;
 using BackupsExtra.Models;
 using BackupsExtra.Tools;
@@ -15,7 +16,17 @@ namespace BackupsExtra.Algorithms
 
         public RestorePoint MergeClean(Backup backup)
         {
-            throw new System.NotImplementedException();
+            var directoryInfo = new DirectoryInfo(backup.Repository.Path).GetFiles();
+
+            switch (backup.CreatedBy)
+            {
+                case AlgoType.SingleStorage:
+                    Clean(backup);
+                    break;
+                case AlgoType.SpliStorage:
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         public void Clean(Backup backup)
