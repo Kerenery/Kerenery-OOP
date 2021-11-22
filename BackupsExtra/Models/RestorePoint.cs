@@ -24,6 +24,7 @@ namespace BackupsExtra.Models
             if (!zipFile.Entries.Any(entry => entry.FullName.EndsWith(fileName)))
                 throw new BackupsExtraException($"file is not found, {zipFile} or {fileName} is incorrect");
 
+            zipFile.Dispose();
             if (Files.Any(file => file == fileName))
                 throw new BadImageFormatException("file is already added");
 
