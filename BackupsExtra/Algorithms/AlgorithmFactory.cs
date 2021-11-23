@@ -27,23 +27,7 @@ namespace BackupsExtra.Algorithms
                     PointsLimit = pointsLimit ?? throw new BackupsExtraException("points count can't be null"),
                     Preference = preference,
                 },
-                Limit.DateLimitMergeable => new RestorePointDateCleaner()
-                {
-                    CleaningDate = date ?? throw new BackupsExtraException("date can't be null"),
-                    IsMergeable = true,
-                },
-                Limit.RestorePointsMergeable => new RestorePointCountCleaner()
-                {
-                    IsMergeable = true,
-                    PointsLimit = pointsLimit ?? throw new BackupsExtraException("points count can't be null"),
-                },
-                Limit.HybridMergeable => new HybridCleaner()
-                {
-                    IsMergeable = true,
-                    CleaningDate = date ?? throw new BackupsExtraException("date can't be null"),
-                    PointsLimit = pointsLimit ?? throw new BackupsExtraException("points count can't be null"),
-                    Preference = preference,
-                },
+                Limit.Merge => new MergeCleaner(),
                 _ => throw new BackupsExtraException("unknown limit"),
             };
         }
@@ -53,7 +37,7 @@ namespace BackupsExtra.Algorithms
             return algoType switch
             {
                 AlgoType.SingleStorage => new SingleStorageAlgorithm(),
-                AlgoType.SpliStorage => new SplitStorageAlgorithm(),
+                AlgoType.SplitStorage => new SplitStorageAlgorithm(),
                 _ => throw new BackupsExtraException("unknown algorithm type")
             };
         }
