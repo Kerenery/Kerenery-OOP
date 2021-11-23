@@ -2,7 +2,14 @@
 {
     public enum AlgoType
     {
+        /// <summary>
+        /// used in a way to identify backup type while cleaning
+        /// </summary>
         SingleStorage,
-        SpliStorage,
+
+        /// <summary>
+        /// used in a way to identify backup type while cleaning
+        /// </summary>
+        SplitStorage,
     }
 }

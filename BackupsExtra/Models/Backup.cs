@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using BackupsExtra.Enums;
 using BackupsExtra.Tools;
-using Microsoft.VisualBasic.CompilerServices;
 using Serilog;
 
 namespace BackupsExtra.Models
@@ -37,12 +36,12 @@ namespace BackupsExtra.Models
         public void RemoveRestorePoints(int count)
         {
             if (count >= Term)
-                throw new BackupsExtraException($"cant delete so many points, {count} is bigger then points count");
+                throw new BackupsExtraException($"cant delete so many points, {count} is bigger than points count");
 
             _restorePoints.RemoveRange(0, count);
             Log.Information($"removed {count} points from backup {Id}");
         }
 
-        public RestorePoint GetFirstPoint() => _restorePoints.FirstOrDefault();
+        public List<RestorePoint> GetRestorePoints() => new (_restorePoints);
     }
 }

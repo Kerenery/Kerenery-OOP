@@ -10,7 +10,7 @@ namespace BackupsExtra.Models
 {
     public class RestorePoint
     {
-        private List<string> _files = new ();
+        private readonly List<string> _files = new ();
         public Guid Id { get; init; }
 
         public DateTime CreationDate { get; init; }
@@ -30,5 +30,7 @@ namespace BackupsExtra.Models
 
             _files.Add(fileName);
         }
+
+        public List<string> GetFiles() => new (_files);
     }
 }
