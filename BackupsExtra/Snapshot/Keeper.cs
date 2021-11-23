@@ -22,7 +22,7 @@ namespace BackupsExtra.Snapshot
         {
             _shots.Add(_backupService.Save());
             File.WriteAllText(
-                Path.Combine(Directory.GetCurrentDirectory(), $"{_shots.Count}.json"),
+                Path.Combine(Directory.GetCurrentDirectory(), "1.json"),
                 JsonConvert.SerializeObject(
                     _shots.Last(),
                     new JsonSerializerSettings()
@@ -34,7 +34,7 @@ namespace BackupsExtra.Snapshot
 
         public void Restore()
         {
-            using StreamReader reader = new (Path.Combine(Directory.GetCurrentDirectory(), $"{_shots.Count}.json"));
+            using StreamReader reader = new (Path.Combine(Directory.GetCurrentDirectory(), $"1.json"));
             string jsonReader = reader.ReadToEnd();
             BackupsSnapshot snapshot = JsonConvert.DeserializeObject<BackupsSnapshot>(
             jsonReader, new JsonSerializerSettings()
