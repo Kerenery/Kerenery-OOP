@@ -35,8 +35,8 @@ namespace BackupsExtra.Services
                     Repository = backupJob.Destination,
                     Id = Guid.NewGuid(),
                     Name = $"backup[{_backups.Count}]",
-                    CreatedBy = ,
-,                };
+                    CreatedBy = backupJob.Algorithm.Type,
+                };
 
                 _backups.Add(backup);
                 Log.Information($"{backup.Id} backup is created");
@@ -72,19 +72,35 @@ namespace BackupsExtra.Services
             _cleanJobs.Add(cleanJob);
             var selectedBackup = _backups.First(b => b.Id == cleanJob.BackupToCleanId);
 
-            switch (cleanJob.CleaningAlgorithm.IsMergeable)
-            {
-                case true:
-                    selectedBackup.AddRestorePoint(cleanJob.CleaningAlgorithm.MergeClean(selectedBackup));
-                    break;
-                case false:
-                    cleanJob.CleaningAlgorithm.Clean(selectedBackup);
-                    break;
-            }
-
+            cleanJob.CleaningAlgorithm.Clean(selectedBackup);
             Log.Information("cleaning finished");
             return cleanJob;
         }
+
+        public Backup AddBackup(string backupName, string directoryPath)
+        {
+            if (string.IsNullOrWhiteSpace(backupName))
+                throw new BackupsExtraException("name can't be null or whitespace");
+
+            if (_backups.Any(b => b.Name == backupName))
+                Log.Warning($"backup with exactly such name {backupName} already exists");
+
+            if (string.IsNullOrWhiteSpace(directoryPath))
+                throw new BackupsExtraException("something wrong, i can feel it. Path is empty");
+
+            if (!Directory.Exists(directoryPath))
+                Log.Warning("such directory does not exist lol");
+
+            var backup = new Backup()
+            {
+                Repository = new Repository() { Path = directoryPath },
+            };
+
+            _backups.Add(backup);
+            return backup;
+        }
+
+        public List<Backup> GetBackups() => _backups.Select(x => x).ToList();
 
         public IShot Save() => new BackupsSnapshot()
         {
