@@ -38,8 +38,8 @@ namespace BackupsExtra.Algorithms
                     break;
                 case AlgoType.SplitStorage:
                     filesToDelete = backup.GetRestorePoints()
-                        .SelectMany(restorePoint => restorePoint.GetFiles(), (_, file) => new FileInfo(file))
                         .Take(pointsCount)
+                        .SelectMany(restorePoint => restorePoint.GetFiles(), (_, file) => new FileInfo(file))
                         .ToList();
                     break;
                 default:

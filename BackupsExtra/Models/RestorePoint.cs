@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using BackupsExtra.Enums;
 using BackupsExtra.Tools;
 
 namespace BackupsExtra.Models
@@ -26,9 +24,17 @@ namespace BackupsExtra.Models
 
             zipFile.Dispose();
             if (_files.Any(file => file == fileName))
-                throw new BadImageFormatException("file is already added");
+                throw new BackupsExtraException("file is already added");
 
             _files.Add(fileName);
+        }
+
+        public void AddFile(string zipPath)
+        {
+            if (string.IsNullOrWhiteSpace(zipPath))
+                throw new BackupsExtraException("filepath is empty or whitespace");
+
+            _files.Add(zipPath);
         }
 
         public List<string> GetFiles() => new (_files);

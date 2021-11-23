@@ -24,7 +24,7 @@ namespace BackupsExtra.Algorithms
                 var name = Path.GetFileName(jobObjectFile);
                 archive.CreateEntryFromFile(jobObjectFile, Path.Combine(name, $"{term}_{name}"));
                 archive.Dispose();
-                restorePoint.AddFile(zipToOpen, $"{term}_{name}");
+                restorePoint.AddFile(zipToOpen);
             }
 
             return restorePoint;
