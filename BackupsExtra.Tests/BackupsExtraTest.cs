@@ -91,9 +91,8 @@ namespace BackupsExtra.Tests
                 .SetAlgorithm(_pointCountCleaningAlgorithm)
                 .SetBackupToClean(_backupService.FindBackup("backup[0]").Id)
                 .Build();
-
-            _backupKeeper.Backup();
-            _backupKeeper.Restore();
+            
+            Assert.AreEqual(1, _restoreDirectory.GetFiles().Length);
         }
 
         [Test]
@@ -106,15 +105,14 @@ namespace BackupsExtra.Tests
                 .ToDestination(_restoreDirectory.FullName)
                 .Build();
 
-            _backupKeeper.Backup();
-            _backupKeeper.Restore();
-
             var anotherBackupJob = BackupJobBuilder.Init(_backupService)
                 .SetAlgorithm(new SplitStorageAlgorithm())
                 .SetName("even in my bum, even in my bum")
                 .SetJobObject(_jobObject)
                 .ToDestination(_restoreDirectory.FullName)
                 .Build();
+            
+            Assert.AreEqual(4, _restoreDirectory.GetFiles().Length);
         }
 
         [Test]
@@ -158,6 +156,7 @@ namespace BackupsExtra.Tests
             var actual = _backupService.GetBackups()
                 .Select(x => x.Id)
                 .OrderBy(x => x)
+                .Take(3)
                 .ToArray();
 
             CollectionAssert.AreEqual(expectedBackupsIds, actual);
@@ -165,6 +164,32 @@ namespace BackupsExtra.Tests
 
         [Test]
         public void SplitBubblingCleaningCheck()
+        {
+            var backupJob = BackupJobBuilder.Init(_backupService)
+                .SetAlgorithm(new SplitStorageAlgorithm())
+                .SetName("силы в ноль")
+                .SetJobObject(_jobObject)
+                .ToDestination(_restoreDirectory.FullName)
+                .Build();
+            
+            var anotherBackupJob = BackupJobBuilder.Init(_backupService)
+                .SetAlgorithm(new SplitStorageAlgorithm())
+                .SetName("травит душу алкоголь")
+                .SetJobObject(_jobObject)
+                .ToDestination(_restoreDirectory.FullName)
+                .Build();
+            
+            var cleanJob = CleanJobBuilder.Init(_backupService)
+                .SetName("split papasha")
+                .SetAlgorithm(_pointCountCleaningAlgorithm)
+                .SetBackupToClean(_backupService.FindBackup("backup[0]").Id)
+                .Build();
+            
+            Assert.AreEqual(2, _restoreDirectory.GetFiles().Length);
+        }
+
+        [Test]
+        public void SplitMergeCheck()
         {
             var backupJob = BackupJobBuilder.Init(_backupService)
                 .SetAlgorithm(new SplitStorageAlgorithm())
@@ -181,10 +206,12 @@ namespace BackupsExtra.Tests
                 .Build();
             
             var cleanJob = CleanJobBuilder.Init(_backupService)
-                .SetName("split papasha")
-                .SetAlgorithm(_pointCountCleaningAlgorithm)
+                .SetName("пусть ярость благородная")
+                .SetAlgorithm(new MergeCleaner())
                 .SetBackupToClean(_backupService.FindBackup("backup[0]").Id)
                 .Build();
+            
+            Assert.AreEqual(2, _restoreDirectory.GetFiles().Length);
         }
     }
 }
