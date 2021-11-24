@@ -6,6 +6,7 @@ using BackupsExtra.Enums;
 using BackupsExtra.Interfaces;
 using BackupsExtra.Models;
 using BackupsExtra.Tools;
+using Serilog;
 
 namespace BackupsExtra.Algorithms
 {
@@ -21,33 +22,14 @@ namespace BackupsExtra.Algorithms
             var pointsCount = PointsLimit
                               ?? throw new BackupsExtraException("Points limit is not set");
 
-            var repository = backup.Repository
-                              ?? throw new BackupsExtraException("can't find repository u are looking for");
-
-            var directoryInfo = new DirectoryInfo(repository.Path).GetFiles();
-
-            List<FileInfo> filesToDelete = new ();
-
-            switch (backup.CreatedBy)
-            {
-                case AlgoType.SingleStorage:
-                    filesToDelete = directoryInfo.Where(fi => fi is { })
-                        .OrderBy(fi => fi.CreationTime)
-                        .Take(pointsCount)
-                        .ToList();
-                    break;
-                case AlgoType.SplitStorage:
-                    filesToDelete = backup.GetRestorePoints()
-                        .Take(pointsCount)
-                        .SelectMany(restorePoint => restorePoint.GetFiles(), (_, file) => new FileInfo(file))
-                        .ToList();
-                    break;
-                default:
-                    throw new BackupsExtraException("unknown algo type");
-            }
+            var filesToDelete = backup.GetRestorePoints()
+                .Take(pointsCount)
+                .SelectMany(restorePoint => restorePoint.GetFiles(), (_, file) => new FileInfo(file))
+                .ToList();
 
             backup.RemoveRestorePoints(pointsCount);
             filesToDelete.ForEach(f => f.Delete());
+            Log.Information("RestorePointCount cleaning is done successfully");
         }
     }
 }

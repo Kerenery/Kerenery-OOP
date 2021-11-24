@@ -15,6 +15,7 @@ namespace BackupsExtra.Algorithms
             var restorePoint = new RestorePoint()
             {
                 Id = Guid.NewGuid(),
+                CreationDate = DateTime.Now,
             };
 
             foreach (var jobObjectFile in jobObject.Files)

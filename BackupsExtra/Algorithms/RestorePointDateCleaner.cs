@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using BackupsExtra.Interfaces;
 using BackupsExtra.Models;
 using BackupsExtra.Tools;
+using Serilog;
 
 namespace BackupsExtra.Algorithms
 {
@@ -19,17 +21,17 @@ namespace BackupsExtra.Algorithms
             var cleaningDate = CleaningDate
                               ?? throw new BackupsExtraException("Points limit is not set");
 
-            var repository = backup.Repository
-                             ?? throw new BackupsExtraException("can't find repository u are looking for");
-
-            var directoryInfo = new DirectoryInfo(repository.Path).GetFiles();
-            var filesToDelete = directoryInfo.Where(fi => fi is { })
-                .OrderBy(fi => fi.CreationTime < cleaningDate)
+            var restorePoints = backup.GetRestorePoints()
+                .Where(restorePoint => restorePoint.CreationDate < cleaningDate)
                 .ToList();
 
-            backup.RemoveRestorePoints(filesToDelete.Count);
+            var filesToDelete = restorePoints
+                .SelectMany(restorePoint => restorePoint.GetFiles(), (_, file) => new FileInfo(file))
+                .ToList();
 
+            backup.RemoveRestorePoints(restorePoints.Count);
             filesToDelete.ForEach(f => f.Delete());
+            Log.Information("RestorePointDate cleaning is done successfully");
         }
     }
 }
