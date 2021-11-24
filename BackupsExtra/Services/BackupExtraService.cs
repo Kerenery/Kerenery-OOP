@@ -119,6 +119,21 @@ namespace BackupsExtra.Services
             _cleanJobs = shot.CleanJobs;
         }
 
+        public void RestoreToDirectory(Guid backupId, string directoryPath)
+        {
+            if (!Directory.Exists(directoryPath))
+            {
+                Log.Error("can't find directory u are looking for");
+                throw new BackupsExtraException("wrong path");
+            }
+
+            string repositoryPath = _backups.FirstOrDefault(b => b.Id == backupId)?.Repository.Path;
+            if (repositoryPath == null) throw new BackupsExtraException("path is empty");
+            foreach (var file in
+                Directory.GetFiles(repositoryPath))
+                File.Copy(file, Path.Combine(directoryPath, Path.GetFileName(file)));
+        }
+
         public Backup FindBackup(Guid id) => _backups.FirstOrDefault(b => b.Id == id);
         public Backup FindBackup(string name) => _backups.FirstOrDefault(b => b.Name == name);
     }
