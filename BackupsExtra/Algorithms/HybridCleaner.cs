@@ -37,7 +37,8 @@ namespace BackupsExtra.Algorithms
                 .Take(pointsCount)
                 .ToList();
 
-            var hybridSample = dateLimitRestorePoints.Intersect(pointsCountRestorePoints);
+            var hybridSample = dateLimitRestorePoints
+                .Intersect(pointsCountRestorePoints);
             var filesToDelete = hybridSample
                 .SelectMany(restorePoint => restorePoint.GetFiles(), (_, file) => new FileInfo(file))
                 .ToList();
