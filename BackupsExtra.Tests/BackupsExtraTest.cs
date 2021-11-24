@@ -118,7 +118,12 @@ namespace BackupsExtra.Tests
         [Test]
         public void DateCleaning_DeleteAllPoints_ThrowException()
         {
-            _backupKeeper.Restore();
+            var backupJob = BackupJobBuilder.Init(_backupService)
+                .SetAlgorithm(new SplitStorageAlgorithm())
+                .SetName("Хочу питсы")
+                .SetJobObject(_jobObject)
+                .ToDestination(_restoreDirectory.FullName)
+                .Build();
             
             Assert.Catch<BackupsExtraException>(() =>
             {
