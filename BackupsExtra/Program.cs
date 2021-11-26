@@ -4,6 +4,9 @@ using System.IO;
 using BackupsExtra.Algorithms;
 using BackupsExtra.Enums;
 using BackupsExtra.Models;
+using BackupsExtra.Services;
+using BackupsExtra.Snapshot;
+using Newtonsoft.Json;
 using Serilog;
 using Serilog.Formatting.Json;
 using Serilog.Sinks.File;
@@ -14,13 +17,10 @@ namespace BackupsExtra
     {
         private static void Main()
         {
-            Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Information()
-                .WriteTo.Console()
-                .WriteTo.File(new JsonFormatter(), Path.Combine(Directory.GetCurrentDirectory(), "log.json"))
-                .CreateLogger();
+            var backupService = new BackupExtraService();
+            var backupKeeper = new Keeper(backupService);
 
-            Log.CloseAndFlush();
+            backupKeeper.Restore();
         }
     }
 }

@@ -10,7 +10,7 @@ namespace BackupsExtra.Snapshot
 {
     public class Keeper
     {
-        private List<IShot> _shots = new ();
+        private List<BackupsSnapshot> _shots = new ();
         private BackupExtraService _backupService;
 
         public Keeper(BackupExtraService backupService)

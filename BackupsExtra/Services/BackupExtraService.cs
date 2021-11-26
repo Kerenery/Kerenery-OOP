@@ -105,14 +105,14 @@ namespace BackupsExtra.Services
 
         public List<Backup> GetBackups() => _backups.Select(x => x).ToList();
 
-        public IShot Save() => new BackupsSnapshot()
+        public BackupsSnapshot Save() => new BackupsSnapshot()
         {
             Backups = _backups,
             BackupJobs = _backupJobs,
             CleanJobs = _cleanJobs,
         };
 
-        public void Restore(IShot shot)
+        public void Restore(BackupsSnapshot shot)
         {
             if (shot is not BackupsSnapshot)
                 throw new BackupsExtraException($"incorrect shot type - {shot.GetType()}");
