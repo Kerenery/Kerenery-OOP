@@ -24,7 +24,6 @@ namespace BackupsExtra.Algorithms
                 using ZipArchive archive = ZipFile.Open(zipToOpen, ZipArchiveMode.Update);
                 var name = Path.GetFileName(jobObjectFile);
                 archive.CreateEntryFromFile(jobObjectFile, Path.Combine(name, $"{term}_{name}"));
-                archive.Dispose();
                 restorePoint.AddFile(zipToOpen);
             }
 

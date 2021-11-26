@@ -27,7 +27,6 @@ namespace BackupsExtra.Algorithms
                     filesToDelete.Add(new FileInfo(file));
 
                 fileNames.Add(zipEntry);
-                archive.Dispose();
             }
 
             filesToDelete.ForEach(f => f.Delete());
