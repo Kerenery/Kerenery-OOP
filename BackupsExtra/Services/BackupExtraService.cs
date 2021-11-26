@@ -44,7 +44,10 @@ namespace BackupsExtra.Services
 
             _backupJobs.Add(backupJob);
             var selectedBackup = _backups.First(b => b.Repository.Path == backupJob.Destination.Path);
-            selectedBackup.AddRestorePoint(backupJob.Algorithm.Copy(backupJob.JobObject, backupJob.Destination, selectedBackup.Term));
+            selectedBackup.AddRestorePoint(backupJob.Algorithm.Copy(
+                backupJob.JobObject,
+                backupJob.Destination,
+                selectedBackup.Term));
             Log.Information("backupJob process finished, created new restore point");
             return backupJob;
         }
@@ -134,7 +137,35 @@ namespace BackupsExtra.Services
                 File.Copy(file, Path.Combine(directoryPath, Path.GetFileName(file)));
         }
 
+        public JobObject CreateJobObject(List<string> filesToSave, string jobObjectName)
+        {
+            if (string.IsNullOrWhiteSpace(jobObjectName))
+                throw new BackupsExtraException("name can't be null or empty");
+
+            if (filesToSave.Count == 0)
+                throw new BackupsExtraException("list of files to save cannot be empty");
+
+            if (filesToSave.Any(filePath => !File.Exists(filePath)))
+                throw new BackupsExtraException("file does not exist");
+
+            var jobObject = new JobObject()
+            {
+                Id = Guid.NewGuid(),
+                Files = filesToSave,
+                Name = jobObjectName,
+            };
+
+            Log.Information($"job object with name {jobObjectName} was created successfully!");
+            return jobObject;
+        }
+
         public Backup FindBackup(Guid id) => _backups.FirstOrDefault(b => b.Id == id);
+
         public Backup FindBackup(string name) => _backups.FirstOrDefault(b => b.Name == name);
+
+        public JobObject FindJobObject(string name) => _backupJobs
+                .Where(backupJob => backupJob.JobObject.Name == name)
+                .Select(backupJob => backupJob.JobObject)
+                .FirstOrDefault();
     }
 }

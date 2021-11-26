@@ -27,7 +27,6 @@ namespace BackupsExtra.Tests
         private AlgorithmFactory _algorithmFactory;
         private ICleaningAlgorithm _pointCountCleaningAlgorithm;
         private ICleaningAlgorithm _wrongDateCleaningAlgorithm;
-        private ICleaningAlgorithm _correctDateCleaningAlgorithm;
 
         [SetUp]
         public void Setup()
@@ -49,8 +48,6 @@ namespace BackupsExtra.Tests
                 .CreateCleaningAlgorithm(Limit.RestorePoints, pointsLimit: 1);
             _wrongDateCleaningAlgorithm = _algorithmFactory
                 .CreateCleaningAlgorithm(Limit.DateLimit, date: DateTime.Now.AddDays(1));
-            _correctDateCleaningAlgorithm = _algorithmFactory
-                .CreateCleaningAlgorithm(Limit.DateLimit, DateTime.Today.AddDays(-1));
 
             List<string> files = new()
             {
@@ -217,6 +214,32 @@ namespace BackupsExtra.Tests
                 .Build();
             
             Assert.AreEqual(2, _restoreDirectory.GetFiles().Length);
+        }
+
+        [Test]
+        public void ShouldSaveAndLoadJobsStates_Successful()
+        {
+            var jobObject = _backupService.CreateJobObject(new List<string>
+            {
+                Path.GetFullPath(_firstFile.Name),
+                Path.GetFullPath(_secondFile.Name),
+            }, "casual job object");
+            
+            var backupJob = BackupJobBuilder.Init(_backupService)
+                .SetAlgorithm(new SingleStorageAlgorithm())
+                .SetName("job object id check")
+                .SetJobObject(jobObject)
+                .ToDestination(_restoreDirectory.FullName)
+                .Build();
+
+            var expectedJobId = jobObject.Id;
+
+            _backupKeeper.Backup();
+            _backupKeeper.Restore();
+
+            var actual = _backupService.FindJobObject("casual job object").Id;
+
+            Assert.AreEqual(expectedJobId, actual);
         }
     }
 }
