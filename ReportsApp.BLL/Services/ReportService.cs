@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
+using ReportsApp.BLL.Interfaces;
 using ReportsApp.DAL.Entities;
 using ReportsApp.DAL.Repositories;
 
 namespace ReportsApp.BLL.Services
 {
-    public class ReportService
+    public class ReportService : IReportService
     {
         private readonly ReportsRepository _repository;
 
@@ -34,9 +35,9 @@ namespace ReportsApp.BLL.Services
             return _repository.GetAllReports();
         }
 
-        public void ChangeState(int state, Guid id)
+        public void UpdateReport(Report report)
         {
-            _repository.ChangeState(state, id);
+            _repository.UpdateReport(report);
         }
     }
 }

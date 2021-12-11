@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using ReportsApp.DAL.Context;
 using ReportsApp.DAL.Entities;
 using ReportsApp.DAL.Tools;
@@ -42,15 +43,15 @@ namespace ReportsApp.DAL.Repositories
             return _context.Reports.ToList();
         }
 
-        public void ChangeState(int state, Guid id)
+        public List<Report> GetWeeklyReports()
         {
-            if (state is <= 0 or > 3)
-                throw new ReportsDALException("state is wrong, i can feel it");
-            
-            var report = _context.Reports.FirstOrDefault(r => r.Id == id)
-                                 ?? throw new ReportsDALException("such report does not really exist");
+            return _context.Reports.OrderByDescending(r => r.CreationDate).ToList();
+        }
 
-            report.State = state;
+        public void UpdateReport(Report report)
+        {
+            _context.Entry(report).State = EntityState.Modified;
+            _context.Reports.Update(report);
             _context.SaveChanges();
         }
     }

@@ -60,7 +60,7 @@ namespace ReportsApp.BLL.Controllers
             if (!ModelState.IsValid)
                 return StatusCode((int)HttpStatusCode.BadRequest);
     
-            MyTask employeeToUpdate = new ()
+            MyTask taskToUpdate = new ()
             {
                 Name = model.Name,
                 State = model.State,
@@ -68,7 +68,7 @@ namespace ReportsApp.BLL.Controllers
                 AssignedDate = DateTime.Now,
             };
             
-            _taskService.UpdateTask(employeeToUpdate);
+            _taskService.UpdateTask(taskToUpdate);
             
             return Ok();
         }

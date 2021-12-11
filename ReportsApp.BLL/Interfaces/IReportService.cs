@@ -14,6 +14,6 @@ namespace ReportsApp.BLL.Interfaces
         
         List<Report> GetAllReports();
 
-        void ChangeState(int state, Guid id);
+        void UpdateReport(Report report);
     }
 }

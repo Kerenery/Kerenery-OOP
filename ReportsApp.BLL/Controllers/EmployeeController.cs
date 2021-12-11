@@ -20,14 +20,7 @@ namespace ReportsApp.BLL.Controllers
         {
             _service = service;
         }
-
-        [HttpGet]
-        public List<Employee> GetAll()
-        {
-            return _service.GetEmployees();
-        }
-
-
+        
         [HttpGet("/getById")]
         public IActionResult GetById([FromQuery] Guid id)
         {
@@ -102,6 +95,13 @@ namespace ReportsApp.BLL.Controllers
             
             _service.Create(employee);
             return Ok();
-        }   
+        }
+        
+        
+        [HttpGet]
+        public List<Employee> GetAll()
+        {
+            return _service.GetEmployees();
+        }
     }
 }
