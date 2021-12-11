@@ -45,7 +45,7 @@ namespace ReportsApp.DAL.Repositories
 
         public List<Report> GetWeeklyReports()
         {
-            return _context.Reports.OrderByDescending(r => r.CreationDate).ToList();
+            return _context.Reports.Where(r => r.CreationDate >= DateTime.Today.AddDays(-7)).OrderByDescending(r => r.CreationDate).ToList();
         }
 
         public void UpdateReport(Report report)
