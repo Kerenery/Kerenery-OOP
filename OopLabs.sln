@@ -20,17 +20,23 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Backups", "Backups\Backups.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BackupsExtra", "BackupsExtra\BackupsExtra.csproj", "{B7E8331B-7753-42AD-A499-EDBF81F8287C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IsuExtra.Tests", "IsuExtra.Tests\IsuExtra.Tests.csproj", "{76F496C6-EE25-492E-81A5-8AD9B938C148}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IsuExtra.Tests", "IsuExtra.Tests\IsuExtra.Tests.csproj", "{76F496C6-EE25-492E-81A5-8AD9B938C148}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shops.Tests", "Shops.Tests\Shops.Tests.csproj", "{355C9405-3A4C-4020-A660-32F733B578B5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shops.Tests", "Shops.Tests\Shops.Tests.csproj", "{355C9405-3A4C-4020-A660-32F733B578B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backups.Tests", "Backups.Tests\Backups.Tests.csproj", "{798892D6-EECC-4C27-BB43-FD8BD26133CD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Backups.Tests", "Backups.Tests\Backups.Tests.csproj", "{798892D6-EECC-4C27-BB43-FD8BD26133CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackupsExtra.Tests", "BackupsExtra.Tests\BackupsExtra.Tests.csproj", "{292B4B3A-0991-4B13-882C-7C297B3882B5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BackupsExtra.Tests", "BackupsExtra.Tests\BackupsExtra.Tests.csproj", "{292B4B3A-0991-4B13-882C-7C297B3882B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Banks", "Banks\Banks.csproj", "{F631B30C-A6DE-46B0-99B7-A75FBB6911F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Banks", "Banks\Banks.csproj", "{F631B30C-A6DE-46B0-99B7-A75FBB6911F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Banks.Tests", "Banks.Tests\Banks.Tests.csproj", "{3845CD18-DD04-4B8F-B0DC-74EF9354F6DC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Banks.Tests", "Banks.Tests\Banks.Tests.csproj", "{3845CD18-DD04-4B8F-B0DC-74EF9354F6DC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ReportsApp", "ReportsApp", "{B3194091-F0AE-4B3E-AC64-642452B75A03}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReportsApp.DAL", "ReportsApp.DAL\ReportsApp.DAL.csproj", "{FEE2FD97-4579-4CAF-9C0D-6D40CC1D3536}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReportsApp.BLL", "ReportsApp.BLL\ReportsApp.BLL.csproj", "{26B5F6B1-41B3-451B-90F5-B7C81FFDE3AB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -86,9 +92,21 @@ Global
 		{3845CD18-DD04-4B8F-B0DC-74EF9354F6DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3845CD18-DD04-4B8F-B0DC-74EF9354F6DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3845CD18-DD04-4B8F-B0DC-74EF9354F6DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEE2FD97-4579-4CAF-9C0D-6D40CC1D3536}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEE2FD97-4579-4CAF-9C0D-6D40CC1D3536}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEE2FD97-4579-4CAF-9C0D-6D40CC1D3536}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEE2FD97-4579-4CAF-9C0D-6D40CC1D3536}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26B5F6B1-41B3-451B-90F5-B7C81FFDE3AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26B5F6B1-41B3-451B-90F5-B7C81FFDE3AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26B5F6B1-41B3-451B-90F5-B7C81FFDE3AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26B5F6B1-41B3-451B-90F5-B7C81FFDE3AB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{FEE2FD97-4579-4CAF-9C0D-6D40CC1D3536} = {B3194091-F0AE-4B3E-AC64-642452B75A03}
+		{26B5F6B1-41B3-451B-90F5-B7C81FFDE3AB} = {B3194091-F0AE-4B3E-AC64-642452B75A03}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E4407539-DCCB-468D-85AD-1EA5121A2B54}
